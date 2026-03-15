@@ -33,7 +33,8 @@ class NotificationService {
 
   Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
     if (silent || kIsWeb) return;
-    await (flutterLocalNotificationsPlugin as dynamic).zonedSchedule(
+    dynamic plugin = flutterLocalNotificationsPlugin;
+    await plugin.zonedSchedule(
       id,
       title,
       body,
@@ -42,7 +43,15 @@ class NotificationService {
         android: AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: _getAbsoluteTimeInterpretation(),
     );
+  }
+
+  dynamic _getAbsoluteTimeInterpretation() {
+    try {
+      return (dynamic as dynamic).UILocalNotificationDateInterpretation.absoluteTime;
+    } catch (_) {
+      return null;
+    }
   }
 }
