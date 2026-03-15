@@ -1,5 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -16,6 +18,16 @@ class DatabaseService {
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      var factory = databaseFactoryFfiWeb;
+      return await factory.openDatabase(
+        'masar_database.db',
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, version) => _onCreate(db as Database, version),
+        ),
+      );
+    }
     String path = join(await getDatabasesPath(), 'masar_database.db');
     return await openDatabase(
       path,
