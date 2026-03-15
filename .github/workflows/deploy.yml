@@ -6,6 +6,9 @@ on:
       - main
       - jules-4394396989823480729-b1ee46af
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
