@@ -11,6 +11,7 @@ import 'utils/morning_messages.dart';
 import 'dart:math';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,7 @@ void main() async {
 }
 
 void _scheduleMorningMessage() {
+  if (kIsWeb) return;
   final random = Random();
   final message = MorningMessages.messages[random.nextInt(MorningMessages.messages.length)];
 
@@ -57,22 +59,32 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  late StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
+    _intentDataStreamSubscription = null;
+    _setupSharing();
+  }
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
+  void _setupSharing() async {
+    if (kIsWeb) return;
+    try {
+       _intentDataStreamSubscription = (ReceiveSharingIntent as dynamic).getTextStream().listen((String value) {
         _saveSharedLink(value);
-      }
-    });
+      }, onError: (err) {
+        print("getLinkStream error: $err");
+      });
+
+      (ReceiveSharingIntent as dynamic).getInitialText().then((String? value) {
+        if (value != null) {
+          _saveSharedLink(value);
+        }
+      });
+    } catch (e) {
+      print("Sharing intent error: $e");
+    }
   }
 
   void _saveSharedLink(String link) async {
@@ -86,19 +98,25 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'مسار',
-      theme: AppTheme.lightTheme,
-      home: Consumer<ProfileProvider>(
-        builder: (ctx, profileProv, _) =>
-          profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
-      ),
+    return Consumer<SettingsProvider>(
+      builder: (ctx, settings, _) {
+        return MaterialApp(
+          title: 'مسار',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: Consumer<ProfileProvider>(
+            builder: (ctx, profileProv, _) =>
+              profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
+          ),
+        );
+      }
     );
   }
 }

@@ -1,0 +1,12 @@
+{
+  "assets": {},
+  "config": {
+    "build_asset_types": [],
+    "linking_enabled": true
+  },
+  "out_dir_shared": "/app/.dart_tool/hooks_runner/shared/sqlite3/build/",
+  "out_file": "/app/.dart_tool/hooks_runner/sqlite3/6782ff62a0/output.json",
+  "package_name": "sqlite3",
+  "package_root": "/home/jules/.pub-cache/hosted/pub.dev/sqlite3-3.2.0/",
+  "user_defines": {}
+}

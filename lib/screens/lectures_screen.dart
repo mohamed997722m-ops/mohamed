@@ -37,10 +37,21 @@ class _LecturesScreenState extends State<LecturesScreen> {
             ? Center(child: Text('لا يوجد محاضرات مضافة'))
             : ListView.builder(
                 itemCount: _lectures.length,
-                itemBuilder: (ctx, i) => ListTile(
-                  title: Text(_lectures[i]['subject']),
-                  subtitle: Text("${_lectures[i]['doctor']} - ${_lectures[i]['day']}"),
-                  trailing: Text(_lectures[i]['startTime']),
+                itemBuilder: (ctx, i) => Card(
+                  margin: EdgeInsets.all(8),
+                  child: ListTile(
+                    title: Text(_lectures[i]['subject'], style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("الدكتور: ${_lectures[i]['doctor']}"),
+                        Text("المكان: ${_lectures[i]['building']} - ${_lectures[i]['room']}"),
+                        Text("اليوم: ${_getDayArabic(_lectures[i]['day'])}"),
+                      ],
+                    ),
+                    trailing: Text(_lectures[i]['startTime'], style: TextStyle(fontWeight: FontWeight.bold)),
+                    onLongPress: () => _deleteLecture(_lectures[i]['id']),
+                  ),
                 ),
               ),
       ),
@@ -50,6 +61,19 @@ class _LecturesScreenState extends State<LecturesScreen> {
         backgroundColor: Colors.green,
       ),
     );
+  }
+
+  String _getDayArabic(String day) {
+    switch (day) {
+      case 'Saturday': return 'السبت';
+      case 'Sunday': return 'الأحد';
+      case 'Monday': return 'الاثنين';
+      case 'Tuesday': return 'الثلاثاء';
+      case 'Wednesday': return 'الأربعاء';
+      case 'Thursday': return 'الخميس';
+      case 'Friday': return 'الجمعة';
+      default: return day;
+    }
   }
 
   void _showAddLectureDialog(BuildContext context) {
@@ -79,7 +103,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
                   DropdownButtonFormField<String>(
                     value: _selectedDay,
                     items: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-                        .map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
+                        .map((d) => DropdownMenuItem(value: d, child: Text(_getDayArabic(d)))).toList(),
                     onChanged: (val) => _selectedDay = val!,
                     decoration: InputDecoration(labelText: 'اليوم'),
                   ),
@@ -119,7 +143,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
                   });
                   Navigator.of(ctx).pop();
                   _refreshLectures();
-                  _scheduleLectureReminder(_subjectController.text, _selectedDay, _startTime);
+                  // Notification logic will be handled centrally
                 },
                 child: Text('حفظ'),
               ),
@@ -130,16 +154,9 @@ class _LecturesScreenState extends State<LecturesScreen> {
     );
   }
 
-  void _scheduleLectureReminder(String subject, String day, TimeOfDay time) {
-    // Basic logic to find next occurrence of 'day' at 'time' and schedule notification
-    // For simplicity, we schedule it for the next occurrence
-    final now = DateTime.now();
-    // In a real app, we'd calculate the exact DateTime based on the day of the week
-    NotificationService().scheduleNotification(
-      subject.hashCode,
-      "تذكير محاضرة",
-      "لديك محاضرة $subject غداً",
-      now.add(Duration(days: 1)), // Placeholder for actual scheduling logic
-    );
+  void _deleteLecture(int id) async {
+    final db = await DatabaseService().database;
+    await db.delete('lectures', where: 'id = ?', whereArgs: [id]);
+    _refreshLectures();
   }
 }

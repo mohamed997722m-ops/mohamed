@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
+import 'dart:math';
 
 class TasksScreen extends StatefulWidget {
   @override
@@ -8,6 +9,9 @@ class TasksScreen extends StatefulWidget {
 
 class _TasksScreenState extends State<TasksScreen> {
   List<Map<String, dynamic>> _tasks = [];
+  final List<Color> _vividColors = [
+    Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple, Colors.pink, Colors.teal, Colors.indigo
+  ];
 
   @override
   void initState() {
@@ -27,7 +31,7 @@ class _TasksScreenState extends State<TasksScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('التاسكات'),
+        title: Text('التاسكات (المهمات)'),
         backgroundColor: Colors.green,
       ),
       body: Directionality(
@@ -38,20 +42,27 @@ class _TasksScreenState extends State<TasksScreen> {
                 itemCount: _tasks.length,
                 itemBuilder: (ctx, i) {
                   final task = _tasks[i];
+                  final color = task['color'] != null ? Color(task['color']) : _vividColors[i % _vividColors.length];
                   return Card(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: color, width: 2),
+                    ),
                     child: ListTile(
-                      leading: Icon(
-                        task['isDone'] == 1 ? Icons.check_circle : Icons.error,
-                        color: task['isDone'] == 1 ? Colors.green : Colors.red,
+                      leading: IconButton(
+                        icon: Icon(
+                          task['isDone'] == 1 ? Icons.check_circle : Icons.radio_button_unchecked,
+                          color: color,
+                        ),
+                        onPressed: () => _toggleDone(task),
                       ),
-                      title: Text(task['title']),
-                      subtitle: Text("الموعد: ${task['dueDate']}"),
-                      onLongPress: () async {
-                         final db = await DatabaseService().database;
-                         await db.delete('tasks', where: 'id = ?', whereArgs: [task['id']]);
-                         _refreshTasks();
-                      },
+                      title: Text(task['title'], style: TextStyle(fontWeight: FontWeight.bold, decoration: task['isDone'] == 1 ? TextDecoration.lineThrough : null)),
+                      subtitle: Text("موعد التسليم: ${task['dueDate']}"),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.grey),
+                        onPressed: () => _deleteTask(task['id']),
+                      ),
                     ),
                   );
                 },
@@ -78,7 +89,7 @@ class _TasksScreenState extends State<TasksScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: _titleController, decoration: InputDecoration(labelText: 'العنوان')),
+              TextField(controller: _titleController, decoration: InputDecoration(labelText: 'اسم التاسك')),
               TextField(controller: _dateController, decoration: InputDecoration(labelText: 'تاريخ التسليم')),
             ],
           ),
@@ -87,12 +98,14 @@ class _TasksScreenState extends State<TasksScreen> {
             TextButton(
               onPressed: () async {
                 final db = await DatabaseService().database;
+                final randomColor = _vividColors[Random().nextInt(_vividColors.length)].value;
                 await db.insert('tasks', {
                   'title': _titleController.text,
                   'dueDate': _dateController.text,
                   'isDone': 0,
                   'description': '',
                   'relatedSubject': '',
+                  'color': randomColor,
                 });
                 Navigator.of(ctx).pop();
                 _refreshTasks();
@@ -103,5 +116,17 @@ class _TasksScreenState extends State<TasksScreen> {
         ),
       ),
     );
+  }
+
+  void _toggleDone(Map<String, dynamic> task) async {
+    final db = await DatabaseService().database;
+    await db.update('tasks', {'isDone': task['isDone'] == 1 ? 0 : 1}, where: 'id = ?', whereArgs: [task['id']]);
+    _refreshTasks();
+  }
+
+  void _deleteTask(int id) async {
+    final db = await DatabaseService().database;
+    await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
+    _refreshTasks();
   }
 }
