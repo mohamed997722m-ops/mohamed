@@ -20,58 +20,45 @@ class SettingsScreen extends StatelessWidget {
               title: Text('الوضع الصامت (تجاهل التنبيهات)'),
               value: settingsProv.isSilentMode,
               activeColor: Colors.red,
-              onChanged: (val) => settingsProv.toggleSilentMode(),
+              onChanged: (val) {
+                settingsProv.toggleSilentMode();
+                if (val) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('يا جدع عيب 😠', textAlign: TextAlign.center, style: TextStyle(fontSize: 18))),
+                  );
+                }
+              },
+            ),
+            SwitchListTile(
+              title: Text('الوضع الليلي'),
+              value: settingsProv.isDarkMode,
+              onChanged: (val) => settingsProv.toggleDarkMode(),
             ),
             ListTile(
-              title: Text('وقت التذكير بالمحاضرات'),
-              subtitle: Text(_translateOffset(settingsProv.reminderOffset)),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => _showOffsetDialog(context, settingsProv),
+              title: Text('وقت التذكير المسائي'),
+              subtitle: Text(settingsProv.reminderTime),
+              trailing: Icon(Icons.access_time),
+              onTap: () async {
+                final picked = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay(
+                    hour: int.parse(settingsProv.reminderTime.split(':')[0]),
+                    minute: int.parse(settingsProv.reminderTime.split(':')[1]),
+                  ),
+                );
+                if (picked != null) {
+                  settingsProv.setReminderTime("${picked.hour}:${picked.minute}");
+                }
+              },
             ),
             Divider(),
             ListTile(
               title: Text('حول التطبيق'),
-              subtitle: Text('مسار v1.0.0'),
+              subtitle: Text('مسار v1.0.0 - صنع بواسطة محمد سعيد'),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  String _translateOffset(String offset) {
-    switch (offset) {
-      case "night_before": return "قبلها بليلة";
-      case "1_hour": return "قبلها بساعة";
-      case "30_min": return "قبلها بـ 30 دقيقة";
-      default: return offset;
-    }
-  }
-
-  void _showOffsetDialog(BuildContext context, SettingsProvider prov) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: SimpleDialog(
-          title: Text('اختر وقت التذكير'),
-          children: [
-            _option(ctx, prov, "night_before", "قبلها بليلة"),
-            _option(ctx, prov, "1_hour", "قبلها بساعة"),
-            _option(ctx, prov, "30_min", "قبلها بـ 30 دقيقة"),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _option(BuildContext ctx, SettingsProvider prov, String value, String text) {
-    return SimpleDialogOption(
-      onPressed: () {
-        prov.setReminderOffset(value);
-        Navigator.pop(ctx);
-      },
-      child: Text(text),
     );
   }
 }

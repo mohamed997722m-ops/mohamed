@@ -17,7 +17,11 @@ class ProfileProvider with ChangeNotifier {
         college: prefs.getString('user_college') ?? '',
         department: prefs.getString('user_dept') ?? '',
         semester: prefs.getString('user_semester') ?? '',
+        phone: prefs.getString('user_phone'),
+        address: prefs.getString('user_address'),
+        age: prefs.getInt('user_age') ?? 0,
         score: prefs.getInt('user_score') ?? 0,
+        semesterStartDate: prefs.getString('user_semester_start'),
       );
       notifyListeners();
     }
@@ -30,7 +34,11 @@ class ProfileProvider with ChangeNotifier {
     await prefs.setString('user_college', profile.college);
     await prefs.setString('user_dept', profile.department);
     await prefs.setString('user_semester', profile.semester);
+    if (profile.phone != null) await prefs.setString('user_phone', profile.phone!);
+    if (profile.address != null) await prefs.setString('user_address', profile.address!);
+    await prefs.setInt('user_age', profile.age);
     await prefs.setInt('user_score', profile.score);
+    if (profile.semesterStartDate != null) await prefs.setString('user_semester_start', profile.semesterStartDate!);
     _profile = profile;
     notifyListeners();
   }
@@ -44,11 +52,24 @@ class ProfileProvider with ChangeNotifier {
         college: _profile!.college,
         department: _profile!.department,
         semester: _profile!.semester,
+        phone: _profile!.phone,
+        address: _profile!.address,
+        age: _profile!.age,
         score: newScore < 0 ? 0 : newScore,
+        semesterStartDate: _profile!.semesterStartDate,
       );
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('user_score', _profile!.score);
       notifyListeners();
     }
+  }
+
+  String get rank {
+    if (_profile == null) return "طالب جديد";
+    int score = _profile!.score;
+    if (score >= 1000) return "بروفيسور";
+    if (score >= 500) return "طالب مجتهد";
+    if (score >= 200) return "طالب نشيط";
+    return "طالب مستجد";
   }
 }
