@@ -418,76 +418,9 @@
 </head>
 <body>
 
-    <!-- Onboarding -->
-    <div id="onboarding-screen">
-        <div class="step-container" id="step-1">
-            <div class="logo-anim">🛤️</div>
-            <h1 id="txt-welcome">مرحباً بك في مسار</h1>
-            <p id="txt-onboarding-1">لنبدأ بتجهيز ملفك الشخصي</p>
-            <br>
-            <div class="input-group">
-                <label id="lbl-name">الاسم</label>
-                <input type="text" id="in-name" placeholder="ادخل اسمك بالكامل">
-            </div>
-            <div class="input-group">
-                <label id="lbl-age">العمر</label>
-                <input type="number" id="in-age" placeholder="ادخل عمرك">
-            </div>
-            <button class="btn btn-primary" onclick="nextStep(2)" id="btn-next-1">التالي</button>
-        </div>
-
-        <div class="step-container hidden" id="step-2">
-            <h2 id="txt-academic">البيانات الدراسية</h2>
-            <br>
-            <div class="input-group">
-                <label id="lbl-college">الكلية</label>
-                <input type="text" id="in-college" placeholder="مثلاً: هندسة، طب">
-            </div>
-            <div class="input-group">
-                <label id="lbl-dept">القسم</label>
-                <input type="text" id="in-dept" placeholder="مثلاً: حاسبات، عمارة">
-            </div>
-            <div class="input-group">
-                <label id="lbl-city">المحافظة / المدينة <span style="color:red">*</span></label>
-                <select id="in-city">
-                    <option value="">اختر مدينتك</option>
-                    <option value="Cairo">القاهرة</option>
-                    <option value="Alexandria">الإسكندرية</option>
-                    <option value="Giza">الجيزة</option>
-                    <option value="Mansoura">المنصورة</option>
-                    <option value="Tanta">طنطا</option>
-                    <option value="Assiut">أسيوط</option>
-                    <option value="Sohag">سوهاج</option>
-                    <option value="Zagazig">الزقازيق</option>
-                    <option value="Aswan">أسوان</option>
-                    <option value="Luxor">الأقصر</option>
-                    <option value="Ismailia">الإسماعيلية</option>
-                    <option value="Suez">السويس</option>
-                    <option value="Port Said">بورسعيد</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="nextStep(3)" id="btn-next-2">التالي</button>
-            <button class="btn btn-secondary" onclick="nextStep(1)">رجوع</button>
-        </div>
-
-        <div class="step-container hidden" id="step-3">
-            <h2 id="txt-final">خطوات أخيرة</h2>
-            <br>
-            <div class="input-group">
-                <label id="lbl-phone">رقم الهاتف (اختياري)</label>
-                <input type="tel" id="in-phone" placeholder="01xxxxxxxxx">
-            </div>
-            <div class="input-group">
-                <label id="lbl-address">العنوان (اختياري)</label>
-                <input type="text" id="in-address" placeholder="المنطقة، الشارع">
-            </div>
-            <button class="btn btn-primary" onclick="finishOnboarding()" id="btn-finish">ابدأ المسار 🛤️</button>
-            <button class="btn btn-secondary" onclick="nextStep(2)">رجوع</button>
-        </div>
-    </div>
 
     <!-- Main App -->
-    <div id="app-container" class="hidden">
+    <div id="app-container">
         <header>
             <div class="brand">
                 <svg class="path-icon" viewBox="0 0 24 24"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>
@@ -608,8 +541,29 @@
                 <div class="page-content">
                     <div style="text-align: center; margin-bottom: 30px">
                         <div id="profile-pic" style="font-size: 60px; margin-bottom: 10px; cursor: pointer" onclick="openAvatarPicker()">👤</div>
-                        <h2 id="prof-name">الاسم</h2>
-                        <p id="prof-details" style="color: var(--text-muted)">الكلية - القسم</p>
+                        <div class="input-group" style="text-align: center">
+                            <input type="text" id="prof-name-input" style="text-align: center; font-weight: 700; border: none; background: transparent; font-size: 24px" onchange="updateProfile()">
+                        </div>
+                        <div class="input-group" style="text-align: center">
+                            <input type="text" id="prof-details-input" style="text-align: center; border: none; background: transparent; color: var(--text-muted)" onchange="updateProfile()">
+                        </div>
+                        <div class="input-group" style="text-align: center; max-width: 200px; margin: 0 auto">
+                            <select id="prof-city-input" onchange="updateProfile()">
+                                <option value="Cairo">القاهرة</option>
+                                <option value="Alexandria">الإسكندرية</option>
+                                <option value="Giza">الجيزة</option>
+                                <option value="Mansoura">المنصورة</option>
+                                <option value="Tanta">طنطا</option>
+                                <option value="Assiut">أسيوط</option>
+                                <option value="Sohag">سوهاج</option>
+                                <option value="Zagazig">الزقازيق</option>
+                                <option value="Aswan">أسوان</option>
+                                <option value="Luxor">الأقصر</option>
+                                <option value="Ismailia">الإسماعيلية</option>
+                                <option value="Suez">السويس</option>
+                                <option value="Port Said">بورسعيد</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="list-item" onclick="toggleLanguage()">
@@ -696,16 +650,20 @@
         </div>
     </div>
 
-    <!-- Confetti Library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <script>
         // Data State
-        let userData = JSON.parse(localStorage.getItem('masar_user')) || null;
-        let tasks = JSON.parse(localStorage.getItem('masar_tasks')) || [];
-        let lectures = JSON.parse(localStorage.getItem('masar_lectures')) || [];
-        let notes = JSON.parse(localStorage.getItem('masar_notes')) || [];
-        let activity = JSON.parse(localStorage.getItem('masar_activity')) || {};
+        function safeJSON(key, fallback) {
+            try {
+                const val = localStorage.getItem(key);
+                return val ? JSON.parse(val) : fallback;
+            } catch (e) { return fallback; }
+        }
+
+        let userData = safeJSON('masar_user', null);
+        let tasks = safeJSON('masar_tasks', []);
+        let lectures = safeJSON('masar_lectures', []);
+        let notes = safeJSON('masar_notes', []);
+        let activity = safeJSON('masar_activity', {});
         let isMuted = localStorage.getItem('masar_muted') === 'true';
         let currentLang = localStorage.getItem('masar_lang') || 'ar';
         let currentTheme = localStorage.getItem('masar_theme') || 'light';
@@ -793,73 +751,50 @@
         };
 
         // App Initialization
-        window.onload = () => {
+        window.onload = function() {
+            console.log("Window loaded");
             applyTheme();
             applyLanguage();
-            if (userData) {
-                showApp();
-            } else {
-                showOnboarding();
+
+            if (!userData) {
+                userData = {
+                    name: "مستخدم مسار",
+                    age: "",
+                    college: "كلية",
+                    dept: "قسم",
+                    city: "Cairo",
+                    phone: "",
+                    address: "",
+                    avatar: '👤'
+                };
+                localStorage.setItem('masar_user', JSON.stringify(userData));
             }
+
+            showApp();
             startClock();
             updatePrayerTimes();
             renderAll();
-
-            // Fix Next Button logic
-            document.querySelectorAll('input, select').forEach(el => {
-                el.addEventListener('input', checkValidation);
-            });
         };
 
-        function checkValidation() {
-            // Simplified: could hide/disable next button if needed
-            // The user mentioned "Next button doesn't hide", I'll make sure steps transition properly
-        }
-
-        function nextStep(step) {
-            playSound('next');
-            document.querySelectorAll('.step-container').forEach(s => s.classList.add('hidden'));
-            document.getElementById('step-' + step).classList.remove('hidden');
-        }
-
-        function finishOnboarding() {
-            const name = document.getElementById('in-name').value;
-            const city = document.getElementById('in-city').value;
-
-            if (!name || !city) {
-                alert(currentLang === 'ar' ? "يرجى إدخال الاسم والمدينة" : "Please enter Name and City");
-                return;
-            }
-
-            userData = {
-                name: name,
-                age: document.getElementById('in-age').value,
-                college: document.getElementById('in-college').value,
-                dept: document.getElementById('in-dept').value,
-                city: city,
-                phone: document.getElementById('in-phone').value,
-                address: document.getElementById('in-address').value,
-                avatar: '👤'
-            };
-
-            localStorage.setItem('masar_user', JSON.stringify(userData));
-            playSound('success');
-            showApp();
-            updatePrayerTimes();
-        }
-
         function showApp() {
-            document.getElementById('onboarding-screen').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
-            document.getElementById('prof-name').innerText = userData.name;
-            document.getElementById('prof-details').innerText = `${userData.college} - ${userData.dept}`;
+            document.getElementById('prof-name-input').value = userData.name;
+            document.getElementById('prof-details-input').value = `${userData.college} - ${userData.dept}`;
+            document.getElementById('prof-city-input').value = userData.city;
             document.getElementById('avatar-btn').innerText = userData.avatar || '👤';
             document.getElementById('profile-pic').innerText = userData.avatar || '👤';
         }
 
-        function showOnboarding() {
-            document.getElementById('onboarding-screen').classList.remove('hidden');
-            document.getElementById('app-container').classList.add('hidden');
+        function updateProfile() {
+            userData.name = document.getElementById('prof-name-input').value;
+            const details = document.getElementById('prof-details-input').value.split(' - ');
+            userData.college = details[0] || "";
+            userData.dept = details[1] || "";
+            userData.city = document.getElementById('prof-city-input').value;
+
+            localStorage.setItem('masar_user', JSON.stringify(userData));
+            updatePrayerTimes();
+            playSound('success');
         }
 
         // Navigation
@@ -1182,21 +1117,29 @@
         };
 
         function playSound(type) {
-            if (isMuted) return;
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const sequence = sounds[type];
-            let time = ctx.currentTime;
-            for (let i = 0; i < sequence.length; i += 2) {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.frequency.setValueAtTime(sequence[i], time);
-                gain.gain.setValueAtTime(0.1, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + sequence[i + 1]);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(time);
-                osc.stop(time + sequence[i + 1]);
-                time += sequence[i + 1];
+            try {
+                if (isMuted) return;
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const sequence = sounds[type];
+                let time = ctx.currentTime;
+                for (let i = 0; i < sequence.length; i += 2) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.frequency.setValueAtTime(sequence[i], time);
+                    gain.gain.setValueAtTime(0.1, time);
+                    gain.gain.exponentialRampToValueAtTime(0.01, time + sequence[i + 1]);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(time);
+                    osc.stop(time + sequence[i + 1]);
+                    time += sequence[i + 1];
+                }
+                // Close context after playing to save resources
+                setTimeout(() => ctx.close(), time * 1000 + 500);
+            } catch (e) {
+                console.error("Audio error", e);
             }
         }
 
