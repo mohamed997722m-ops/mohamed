@@ -44,6 +44,58 @@
             transition: var(--transition);
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake { animation: shake 0.3s ease-in-out; border-color: var(--error-red) !important; }
+
+        .btn:active { transform: scale(0.95); }
+
+        .btn, .icon-btn, .nav-item, .list-item {
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after, .icon-btn::after, .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            20% { transform: scale(25, 25); opacity: 1; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         /* Utils */
         .hidden { display: none !important; }
         .flex { display: flex; }
@@ -64,6 +116,24 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: var(--light-green);
+            border-radius: 3px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-inner {
+            height: 100%;
+            background: var(--primary-green);
+            transition: width 0.4s ease-in-out;
+            width: 33.33%;
         }
 
         .step-container {
@@ -269,7 +339,10 @@
             border-radius: 20px;
             box-shadow: var(--shadow);
             text-align: center;
+            transition: var(--transition);
         }
+
+        .stat-card:active { transform: scale(0.95); }
 
         .stat-val {
             font-size: 24px;
@@ -313,6 +386,11 @@
 
         .nav-item.active {
             color: var(--primary-green);
+            transform: translateY(-5px);
+        }
+
+        .nav-item.active i {
+            animation: pulse-animation 2s infinite;
         }
 
         .nav-item i {
@@ -397,6 +475,26 @@
             to { transform: translateY(0); }
         }
 
+        .step-container {
+            width: 100%;
+            max-width: 400px;
+            animation: fadeInRight 0.5s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-out-left {
+            animation: fadeOutLeft 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeOutLeft {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-20px); }
+        }
+
         /* Activity Map (GitHub Style) */
         .activity-map {
             display: grid;
@@ -415,12 +513,85 @@
     </style>
     <!-- Icons FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
+    <!-- Onboarding -->
+    <div id="onboarding-screen" class="hidden">
+        <div class="progress-bar">
+            <div id="progress-val" class="progress-inner"></div>
+        </div>
+
+        <div class="step-container" id="step-1">
+            <div class="logo-anim">🛤️</div>
+            <h1 id="txt-welcome">مرحباً بك في مسار</h1>
+            <p id="txt-onboarding-1">لنبدأ بتجهيز ملفك الشخصي</p>
+            <br>
+            <div class="input-group">
+                <label id="lbl-name">الاسم</label>
+                <input type="text" id="in-name" placeholder="ادخل اسمك بالكامل">
+            </div>
+            <div class="input-group">
+                <label id="lbl-age">العمر</label>
+                <input type="number" id="in-age" placeholder="ادخل عمرك">
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(2)" id="btn-next-1">التالي</button>
+        </div>
+
+        <div class="step-container hidden" id="step-2">
+            <h2 id="txt-academic">البيانات الدراسية</h2>
+            <br>
+            <div class="input-group">
+                <label id="lbl-college">الكلية</label>
+                <input type="text" id="in-college" placeholder="مثلاً: هندسة، طب">
+            </div>
+            <div class="input-group">
+                <label id="lbl-dept">القسم</label>
+                <input type="text" id="in-dept" placeholder="مثلاً: حاسبات، عمارة">
+            </div>
+            <div class="input-group">
+                <label id="lbl-city">المحافظة / المدينة <span style="color:red">*</span></label>
+                <select id="in-city">
+                    <option value="">اختر مدينتك</option>
+                    <option value="Cairo">القاهرة</option>
+                    <option value="Alexandria">الإسكندرية</option>
+                    <option value="Giza">الجيزة</option>
+                    <option value="Mansoura">المنصورة</option>
+                    <option value="Tanta">طنطا</option>
+                    <option value="Assiut">أسيوط</option>
+                    <option value="Sohag">سوهاج</option>
+                    <option value="Zagazig">الزقازيق</option>
+                    <option value="Aswan">أسوان</option>
+                    <option value="Luxor">الأقصر</option>
+                    <option value="Ismailia">الإسماعيلية</option>
+                    <option value="Suez">السويس</option>
+                    <option value="Port Said">بورسعيد</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(3)" id="btn-next-2">التالي</button>
+            <button class="btn btn-secondary" onclick="nextStep(1)">رجوع</button>
+        </div>
+
+        <div class="step-container hidden" id="step-3">
+            <h2 id="txt-final">خطوات أخيرة</h2>
+            <br>
+            <div class="input-group">
+                <label id="lbl-phone">رقم الهاتف (اختياري)</label>
+                <input type="tel" id="in-phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="input-group">
+                <label id="lbl-address">العنوان (اختياري)</label>
+                <input type="text" id="in-address" placeholder="المنطقة، الشارع">
+            </div>
+            <button class="btn btn-primary" onclick="finishOnboarding()" id="btn-finish">ابدأ المسار 🛤️</button>
+            <button class="btn btn-secondary" onclick="nextStep(2)">رجوع</button>
+        </div>
+    </div>
 
     <!-- Main App -->
-    <div id="app-container">
+    <div id="app-container" class="hidden">
         <header>
             <div class="brand">
                 <svg class="path-icon" viewBox="0 0 24 24"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>
@@ -757,27 +928,118 @@
             applyLanguage();
 
             if (!userData) {
-                userData = {
-                    name: "مستخدم مسار",
-                    age: "",
-                    college: "كلية",
-                    dept: "قسم",
-                    city: "Cairo",
-                    phone: "",
-                    address: "",
-                    avatar: '👤'
-                };
-                localStorage.setItem('masar_user', JSON.stringify(userData));
+                showOnboarding();
+            } else {
+                showApp();
             }
 
-            showApp();
             startClock();
             updatePrayerTimes();
             renderAll();
         };
 
+        function showOnboarding() {
+            const screen = document.getElementById('onboarding-screen');
+            screen.classList.remove('hidden');
+            screen.style.opacity = '0';
+            setTimeout(() => {
+                screen.style.transition = 'opacity 0.5s ease-in-out';
+                screen.style.opacity = '1';
+            }, 10);
+            document.getElementById('app-container').classList.add('hidden');
+        }
+
+        function nextStep(step) {
+            const currentStep = document.querySelector('.step-container:not(.hidden)');
+
+            // Update progress bar
+            document.getElementById('progress-val').style.width = (step * 33.33) + '%';
+
+            // Simple validation for name/age in step 1
+            if (step > 1) {
+                if (currentStep.id === 'step-1') {
+                    const name = document.getElementById('in-name');
+                    if (!name.value) {
+                        name.classList.add('shake');
+                        setTimeout(() => name.classList.remove('shake'), 300);
+                        return;
+                    }
+                }
+                if (currentStep.id === 'step-2') {
+                    const city = document.getElementById('in-city');
+                    if (!city.value) {
+                        city.classList.add('shake');
+                        setTimeout(() => city.classList.remove('shake'), 300);
+                        return;
+                    }
+                }
+            }
+
+            playSound('click');
+
+            if (currentStep) {
+                currentStep.classList.add('fade-out-left');
+                setTimeout(() => {
+                    document.querySelectorAll('.step-container').forEach(s => {
+                        s.classList.add('hidden');
+                        s.classList.remove('fade-out-left');
+                    });
+                    const next = document.getElementById('step-' + step);
+                    next.classList.remove('hidden');
+                }, 400);
+            } else {
+                document.querySelectorAll('.step-container').forEach(s => s.classList.add('hidden'));
+                document.getElementById('step-' + step).classList.remove('hidden');
+            }
+        }
+
+        function finishOnboarding() {
+            const name = document.getElementById('in-name').value;
+            userData = {
+                name: name,
+                age: document.getElementById('in-age').value,
+                college: document.getElementById('in-college').value,
+                dept: document.getElementById('in-dept').value,
+                city: document.getElementById('in-city').value,
+                phone: document.getElementById('in-phone').value,
+                address: document.getElementById('in-address').value,
+                avatar: '👤'
+            };
+
+            localStorage.setItem('masar_user', JSON.stringify(userData));
+
+            // Celebration
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            playSound('success');
+
+            const screen = document.getElementById('onboarding-screen');
+            screen.style.transition = 'all 0.8s ease-in-out';
+            screen.style.transform = 'translateY(-100%)';
+            screen.style.opacity = '0';
+
+            setTimeout(() => {
+                showApp();
+                updatePrayerTimes();
+                screen.classList.add('hidden');
+            }, 800);
+        }
+
         function showApp() {
-            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            const container = document.getElementById('app-container');
+            container.classList.remove('hidden');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease-out';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 50);
             document.getElementById('prof-name-input').value = userData.name;
             document.getElementById('prof-details-input').value = `${userData.college} - ${userData.dept}`;
             document.getElementById('prof-city-input').value = userData.city;
@@ -800,7 +1062,18 @@
         // Navigation
         function showPage(pageId) {
             playSound('click');
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                document.getElementById('page-' + pageId).classList.remove('hidden');
+
+                mainContent.style.transition = 'all 0.3s ease-out';
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }, 150);
             document.getElementById('page-' + pageId).classList.remove('hidden');
 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -812,12 +1085,19 @@
 
         // Clock & Date
         function startClock() {
-            setInterval(() => {
+            const update = () => {
                 const now = new Date();
                 let h = now.getHours();
                 let m = now.getMinutes();
                 let ampm = h >= 12 ? 'م' : 'ص';
                 if (currentLang === 'en') ampm = h >= 12 ? 'PM' : 'AM';
+
+                // Greeting logic
+                let greeting = "";
+                if (h >= 5 && h < 12) greeting = currentLang === 'ar' ? "صباح الخير" : "Good Morning";
+                else if (h >= 12 && h < 17) greeting = currentLang === 'ar' ? "مساء الخير" : "Good Afternoon";
+                else greeting = currentLang === 'ar' ? "مساء النور" : "Good Evening";
+
                 h = h % 12;
                 h = h ? h : 12;
                 m = m < 10 ? '0' + m : m;
@@ -825,8 +1105,11 @@
 
                 // Simplified Hijri Date
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('full-date').innerText = now.toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US', options);
-            }, 1000);
+                const dateStr = now.toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US', options);
+                document.getElementById('full-date').innerText = `${greeting} · ${dateStr}`;
+            };
+            update();
+            setInterval(update, 1000);
         }
 
         // Prayer Times Logic (Static for demo, real would use Aladhan API)
@@ -953,8 +1236,22 @@
 
         function renderAll() {
             // Home counts
-            document.getElementById('count-tasks').innerText = tasks.filter(t => !t.done).length;
+            const pendingTasks = tasks.filter(t => !t.done).length;
+            document.getElementById('count-tasks').innerText = pendingTasks;
             document.getElementById('count-lectures').innerText = lectures.length; // Simplified
+
+            // Rose bouquet logic
+            const totalTasks = tasks.length;
+            const doneTasks = tasks.filter(t => t.done).length;
+            const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+            document.getElementById('attendance-pct').innerText = pct + '%';
+
+            let emoji = '🌱';
+            if (pct > 25) emoji = '🌿';
+            if (pct > 50) emoji = '🌸';
+            if (pct > 75) emoji = '💐';
+            if (pct === 100 && totalTasks > 0) emoji = '🏆';
+            document.getElementById('rose-bouquet').innerText = emoji;
 
             // Tasks List
             const tList = document.getElementById('tasks-list');
@@ -1004,7 +1301,15 @@
             const task = tasks.find(t => t.id === id);
             task.done = !task.done;
             localStorage.setItem('masar_tasks', JSON.stringify(tasks));
-            if (task.done) playSound('success');
+            if (task.done) {
+                playSound('success');
+                confetti({
+                    particleCount: 40,
+                    spread: 50,
+                    origin: { y: 0.8 },
+                    colors: ['#2E7D32', '#D4AF37']
+                });
+            }
             renderAll();
         }
 
@@ -1031,17 +1336,24 @@
         function renderActivityMap() {
             const grid = document.getElementById('activity-grid');
             grid.innerHTML = '';
-            for (let i = 0; i < 140; i++) {
+            const now = new Date();
+            for (let i = 139; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
                 const cell = document.createElement('div');
                 cell.className = 'map-cell';
-                // Just random visual for demo or map to last 140 days
-                if (Math.random() > 0.8) cell.classList.add('active');
+                if (activity[dateStr]) {
+                    cell.classList.add('active');
+                    cell.title = `${dateStr}: ${activity[dateStr]} interactions`;
+                }
                 grid.appendChild(cell);
             }
         }
 
         // Profile Actions
         function toggleMute() {
+            playSound('click');
             isMuted = !isMuted;
             localStorage.setItem('masar_muted', isMuted);
             document.getElementById('mute-btn').innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
@@ -1049,6 +1361,7 @@
         }
 
         function toggleTheme() {
+            playSound('click');
             currentTheme = currentTheme === 'light' ? 'dark' : 'light';
             localStorage.setItem('masar_theme', currentTheme);
             applyTheme();
@@ -1059,6 +1372,7 @@
         }
 
         function toggleLanguage() {
+            playSound('click');
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             localStorage.setItem('masar_lang', currentLang);
             applyLanguage();
@@ -1069,23 +1383,45 @@
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
-            // Apply texts
-            for (let id in lang) {
-                const el = document.getElementById(id.replace('_', '-').startsWith('txt') ? id.replace('_', '-') : (id.startsWith('lbl') || id.startsWith('btn') || id.startsWith('nav') || id.startsWith('pg') || id.startsWith('prof') ? id : ''));
-                if (el) el.innerText = lang[id];
+            const mapping = {
+                welcome: 'txt-welcome',
+                onboarding_1: 'txt-onboarding-1',
+                lbl_name: 'lbl-name',
+                lbl_age: 'lbl-age',
+                btn_next: ['btn-next-1', 'btn-next-2'],
+                academic: 'txt-academic',
+                lbl_college: 'lbl-college',
+                lbl_dept: 'lbl-dept',
+                lbl_city: 'lbl-city',
+                final: 'txt-final',
+                lbl_phone: 'lbl-phone',
+                lbl_address: 'lbl-address',
+                btn_finish: 'btn-finish',
+                nav_home: 'nav-home',
+                nav_sch: 'nav-sch',
+                nav_tasks: 'nav-tasks',
+                nav_stats: 'nav-stats',
+                nav_prof: 'nav-prof',
+                today_tasks: 'txt-today-tasks',
+                prayers: 'txt-prayers',
+                pg_schedule: 'txt-pg-schedule',
+                pg_tasks: 'txt-pg-tasks',
+                pg_notes: 'txt-pg-notes',
+                pg_stats: 'txt-pg-stats',
+                btn_lang: 'btn-lang',
+                txt_dev: 'txt-dev',
+                txt_export: 'txt-export',
+                txt_import: 'txt-import',
+                txt_footer: 'txt-footer'
+            };
+
+            for (let key in mapping) {
+                const ids = Array.isArray(mapping[key]) ? mapping[key] : [mapping[key]];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && lang[key]) el.innerText = lang[key];
+                });
             }
-            // Selective manual updates
-            document.getElementById('txt-welcome').innerText = lang.welcome;
-            document.getElementById('txt-onboarding-1').innerText = lang.onboarding_1;
-            document.getElementById('lbl-name').innerText = lang.lbl_name;
-            document.getElementById('lbl-age').innerText = lang.lbl_age;
-            document.getElementById('btn-next-1').innerText = lang.btn_next;
-            document.getElementById('nav-home').innerText = lang.nav_home;
-            document.getElementById('nav-sch').innerText = lang.nav_sch;
-            document.getElementById('nav-tasks').innerText = lang.nav_tasks;
-            document.getElementById('nav-stats').innerText = lang.nav_stats;
-            document.getElementById('nav-prof').innerText = lang.nav_prof;
-            document.getElementById('btn-lang').innerText = lang.btn_lang;
 
             renderAll();
         }
