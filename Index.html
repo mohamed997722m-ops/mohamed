@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسار | Masar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --light-green: #E8F5E9;
+            --dark-green: #1B5E20;
+            --white: #FFFFFF;
+            --bg-cream: #F9FBF9;
+            --text-dark: #0A2416;
+            --text-muted: #4A7C59;
+            --accent-gold: #D4AF37;
+            --error-red: #C62828;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-cream: #0A1F0D;
+            --white: #122B16;
+            --text-dark: #E8F5E9;
+            --text-muted: #A5D6A7;
+            --light-green: #1B5E20;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake { animation: shake 0.3s ease-in-out; border-color: var(--error-red) !important; }
+
+        .btn:active { transform: scale(0.95); }
+
+        .btn, .icon-btn, .nav-item, .list-item {
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after, .icon-btn::after, .nav-item::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            20% { transform: scale(25, 25); opacity: 1; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Utils */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .center { align-items: center; justify-content: center; }
+
+        /* Onboarding */
+        #onboarding-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 1000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: var(--light-green);
+            border-radius: 3px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-inner {
+            height: 100%;
+            background: var(--primary-green);
+            transition: width 0.4s ease-in-out;
+            width: 33.33%;
+        }
+
+        .step-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo-anim {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-gold));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
+            animation: breathe 3s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(46, 125, 50, 0.5); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--light-green);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Main UI */
+        #app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-cream);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-name {
+            font-family: 'Amiri', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .path-icon {
+            width: 30px;
+            height: 30px;
+            fill: var(--primary-green);
+        }
+
+        .top-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            margin: 0 20px 20px;
+            padding: 25px;
+            border-radius: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .time-now {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .date-row {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .prayer-next {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Cards */
+        .section-title {
+            padding: 0 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px 20px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:active { transform: scale(0.95); }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 600px;
+            background: var(--white);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            z-index: 1000;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary-green);
+            transform: translateY(-5px);
+        }
+
+        .nav-item.active i {
+            animation: pulse-animation 2s infinite;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Sections Styles */
+        .page-content {
+            padding: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .list-item {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-right: 4px solid var(--primary-green);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: var(--primary-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 600px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            padding: 30px 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .step-container {
+            width: 100%;
+            max-width: 400px;
+            animation: fadeInRight 0.5s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-out-left {
+            animation: fadeOutLeft 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeOutLeft {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-20px); }
+        }
+
+        /* Activity Map (GitHub Style) */
+        .activity-map {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            gap: 3px;
+            margin-top: 10px;
+        }
+
+        .map-cell {
+            aspect-ratio: 1;
+            background: var(--light-green);
+            border-radius: 2px;
+        }
+
+        .map-cell.active { background: var(--primary-green); }
+    </style>
+    <!-- Icons FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <!-- Onboarding -->
+    <div id="onboarding-screen" class="hidden">
+        <div class="progress-bar">
+            <div id="progress-val" class="progress-inner"></div>
+        </div>
+
+        <div class="step-container" id="step-1">
+            <div class="logo-anim">🛤️</div>
+            <h1 id="txt-welcome">مرحباً بك في مسار</h1>
+            <p id="txt-onboarding-1">لنبدأ بتجهيز ملفك الشخصي</p>
+            <br>
+            <div class="input-group">
+                <label id="lbl-name">الاسم</label>
+                <input type="text" id="in-name" placeholder="ادخل اسمك بالكامل">
+            </div>
+            <div class="input-group">
+                <label id="lbl-age">العمر</label>
+                <input type="number" id="in-age" placeholder="ادخل عمرك">
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(2)" id="btn-next-1">التالي</button>
+        </div>
+
+        <div class="step-container hidden" id="step-2">
+            <h2 id="txt-academic">البيانات الدراسية</h2>
+            <br>
+            <div class="input-group">
+                <label id="lbl-college">الكلية</label>
+                <input type="text" id="in-college" placeholder="مثلاً: هندسة، طب">
+            </div>
+            <div class="input-group">
+                <label id="lbl-dept">القسم</label>
+                <input type="text" id="in-dept" placeholder="مثلاً: حاسبات، عمارة">
+            </div>
+            <div class="input-group">
+                <label id="lbl-city">المحافظة / المدينة <span style="color:red">*</span></label>
+                <select id="in-city">
+                    <option value="">اختر مدينتك</option>
+                    <option value="Cairo">القاهرة</option>
+                    <option value="Alexandria">الإسكندرية</option>
+                    <option value="Giza">الجيزة</option>
+                    <option value="Mansoura">المنصورة</option>
+                    <option value="Tanta">طنطا</option>
+                    <option value="Assiut">أسيوط</option>
+                    <option value="Sohag">سوهاج</option>
+                    <option value="Zagazig">الزقازيق</option>
+                    <option value="Aswan">أسوان</option>
+                    <option value="Luxor">الأقصر</option>
+                    <option value="Ismailia">الإسماعيلية</option>
+                    <option value="Suez">السويس</option>
+                    <option value="Port Said">بورسعيد</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(3)" id="btn-next-2">التالي</button>
+            <button class="btn btn-secondary" onclick="nextStep(1)">رجوع</button>
+        </div>
+
+        <div class="step-container hidden" id="step-3">
+            <h2 id="txt-final">خطوات أخيرة</h2>
+            <br>
+            <div class="input-group">
+                <label id="lbl-phone">رقم الهاتف (اختياري)</label>
+                <input type="tel" id="in-phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="input-group">
+                <label id="lbl-address">العنوان (اختياري)</label>
+                <input type="text" id="in-address" placeholder="المنطقة، الشارع">
+            </div>
+            <button class="btn btn-primary" onclick="finishOnboarding()" id="btn-finish">ابدأ المسار 🛤️</button>
+            <button class="btn btn-secondary" onclick="nextStep(2)">رجوع</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app-container" class="hidden">
+        <header>
+            <div class="brand">
+                <svg class="path-icon" viewBox="0 0 24 24"><path d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z"/></svg>
+                <span class="brand-name">مسار</span>
+            </div>
+            <div class="top-icons">
+                <div class="icon-btn" onclick="toggleMute()" id="mute-btn"><i class="fas fa-volume-up"></i></div>
+                <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
+                <div class="icon-btn" onclick="showPage('profile')" id="avatar-btn">👤</div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <!-- Home Page -->
+            <div id="page-home" class="page">
+                <div class="hero-card">
+                    <div class="time-now" id="clock">12:00 م</div>
+                    <div class="date-row" id="full-date">الإثنين، 16 مارس · ٢٤ رمضان</div>
+                    <div class="prayer-next">
+                        <span>الصلاة القادمة: <b id="next-prayer-name">المغرب</b></span>
+                        <span id="prayer-countdown">1:20:00</span>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <span id="txt-today-tasks">مهام اليوم</span>
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="card-grid">
+                    <div class="stat-card" onclick="showPage('tasks')">
+                        <div class="stat-val" id="count-tasks">0</div>
+                        <div class="stat-label">مهام مطلوبة</div>
+                    </div>
+                    <div class="stat-card" onclick="showPage('schedule')">
+                        <div class="stat-val" id="count-lectures">0</div>
+                        <div class="stat-label">محاضرات اليوم</div>
+                    </div>
+                </div>
+
+                <div class="section-title"><span id="txt-prayers">مواقيت الصلاة</span></div>
+                <div style="padding: 0 20px">
+                    <div class="list-item" style="justify-content: space-between">
+                        <span>الفجر</span><span id="p-fajr">--:--</span>
+                    </div>
+                    <div class="list-item" style="justify-content: space-between">
+                        <span>الظهر</span><span id="p-dhuhr">--:--</span>
+                    </div>
+                    <div class="list-item" style="justify-content: space-between">
+                        <span>العصر</span><span id="p-asr">--:--</span>
+                    </div>
+                    <div class="list-item" style="justify-content: space-between">
+                        <span>المغرب</span><span id="p-maghrib">--:--</span>
+                    </div>
+                    <div class="list-item" style="justify-content: space-between">
+                        <span>العشاء</span><span id="p-isha">--:--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Page -->
+            <div id="page-schedule" class="page hidden">
+                <div class="page-content">
+                    <h2 id="txt-pg-schedule">الجدول الدراسي</h2>
+                    <br>
+                    <div id="lectures-list">
+                        <!-- Items here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Page -->
+            <div id="page-tasks" class="page hidden">
+                <div class="page-content">
+                    <h2 id="txt-pg-tasks">المهام (التسكات)</h2>
+                    <br>
+                    <div id="tasks-list">
+                        <!-- Items here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Page -->
+            <div id="page-notes" class="page hidden">
+                <div class="page-content">
+                    <h2 id="txt-pg-notes">الملاحظات</h2>
+                    <br>
+                    <div id="notes-list">
+                        <!-- Items here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Page -->
+            <div id="page-stats" class="page hidden">
+                <div class="page-content">
+                    <h2 id="txt-pg-stats">الإحصائيات والنشاط</h2>
+                    <br>
+                    <div class="stat-card" style="margin-bottom: 20px">
+                        <div style="font-size: 14px; color: var(--text-muted)">نسبة الحضور التراكمية</div>
+                        <div class="stat-val" style="font-size: 40px" id="attendance-pct">0%</div>
+                        <div id="rose-bouquet" style="font-size: 30px">🌱</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div style="text-align: right; font-weight: 600">خريطة النشاط</div>
+                        <div class="activity-map" id="activity-grid">
+                            <!-- 140 cells for 20 weeks -->
+                        </div>
+                    </div>
+
+                    <br>
+                    <button class="btn btn-primary" style="background: var(--error-red)" onclick="confirmEndTerm()">إنهاء الترم الدراسي 🎓</button>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="page-profile" class="page hidden">
+                <div class="page-content">
+                    <div style="text-align: center; margin-bottom: 30px">
+                        <div id="profile-pic" style="font-size: 60px; margin-bottom: 10px; cursor: pointer" onclick="openAvatarPicker()">👤</div>
+                        <div class="input-group" style="text-align: center">
+                            <input type="text" id="prof-name-input" style="text-align: center; font-weight: 700; border: none; background: transparent; font-size: 24px" onchange="updateProfile()">
+                        </div>
+                        <div class="input-group" style="text-align: center">
+                            <input type="text" id="prof-details-input" style="text-align: center; border: none; background: transparent; color: var(--text-muted)" onchange="updateProfile()">
+                        </div>
+                        <div class="input-group" style="text-align: center; max-width: 200px; margin: 0 auto">
+                            <select id="prof-city-input" onchange="updateProfile()">
+                                <option value="Cairo">القاهرة</option>
+                                <option value="Alexandria">الإسكندرية</option>
+                                <option value="Giza">الجيزة</option>
+                                <option value="Mansoura">المنصورة</option>
+                                <option value="Tanta">طنطا</option>
+                                <option value="Assiut">أسيوط</option>
+                                <option value="Sohag">سوهاج</option>
+                                <option value="Zagazig">الزقازيق</option>
+                                <option value="Aswan">أسوان</option>
+                                <option value="Luxor">الأقصر</option>
+                                <option value="Ismailia">الإسماعيلية</option>
+                                <option value="Suez">السويس</option>
+                                <option value="Port Said">بورسعيد</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="list-item" onclick="toggleLanguage()">
+                        <i class="fas fa-globe"></i>
+                        <span id="btn-lang">اللغة: العربية</span>
+                    </div>
+
+                    <div class="list-item" onclick="openInstagram()">
+                        <i class="fab fa-instagram" style="color: #E1306C"></i>
+                        <span id="txt-dev">صانع البرنامج: محمد سعيد</span>
+                    </div>
+
+                    <div class="list-item" onclick="exportData()">
+                        <i class="fas fa-file-export"></i>
+                        <span id="txt-export">تصدير بياناتي</span>
+                    </div>
+
+                    <div class="list-item" onclick="importData()">
+                        <i class="fas fa-file-import"></i>
+                        <span id="txt-import">استيراد بيانات</span>
+                    </div>
+
+                    <br>
+                    <p id="txt-footer" style="font-size: 11px; text-align: center; color: var(--text-muted)">جميع بياناتك محفوظة محلياً على جهازك فقط</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="fab" onclick="openAddModal()" id="main-fab"><i class="fas fa-plus"></i></div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                <span id="nav-home">الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="showPage('schedule')">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="nav-sch">الجدول</span>
+            </div>
+            <div class="nav-item" onclick="showPage('tasks')">
+                <i class="fas fa-check-circle"></i>
+                <span id="nav-tasks">المهام</span>
+            </div>
+            <div class="nav-item" onclick="showPage('stats')">
+                <i class="fas fa-chart-bar"></i>
+                <span id="nav-stats">النشاط</span>
+            </div>
+            <div class="nav-item" onclick="showPage('profile')">
+                <i class="fas fa-user"></i>
+                <span id="nav-prof">حسابي</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Modals -->
+    <div id="add-modal" class="modal" onclick="closeModal(event, 'add-modal')">
+        <div class="modal-content">
+            <h3 id="txt-add-title">إضافة جديدة</h3>
+            <br>
+            <div class="input-group">
+                <label>النوع</label>
+                <select id="add-type" onchange="toggleAddFields()">
+                    <option value="task">مهمة (تسك)</option>
+                    <option value="lecture">محاضرة / سكشن</option>
+                    <option value="note">ملاحظة</option>
+                </select>
+            </div>
+            <div id="add-fields">
+                <!-- Dynamic Fields -->
+            </div>
+            <button class="btn btn-primary" onclick="saveNewItem()">حفظ</button>
+        </div>
+    </div>
+
+    <div id="avatar-modal" class="modal" onclick="closeModal(event, 'avatar-modal')">
+        <div class="modal-content">
+            <h3>اختر شخصيتك</h3>
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; font-size: 30px; text-align: center; padding: 20px 0;">
+                <span onclick="setAvatar('🐱')">🐱</span><span onclick="setAvatar('🐶')">🐶</span><span onclick="setAvatar('🦊')">🦊</span><span onclick="setAvatar('🦁')">🦁</span><span onclick="setAvatar('🦁')">🦁</span>
+                <span onclick="setAvatar('🐼')">🐼</span><span onclick="setAvatar('🐻')">🐻</span><span onclick="setAvatar('🐨')">🐨</span><span onclick="setAvatar('🐯')">🐯</span><span onclick="setAvatar('🐮')">🐮</span>
+                <span onclick="setAvatar('🐷')">🐷</span><span onclick="setAvatar('🐵')">🐵</span><span onclick="setAvatar('🦄')">🦄</span><span onclick="setAvatar('🐲')">🐲</span><span onclick="setAvatar('🦖')">🦖</span>
+                <span onclick="setAvatar('🐱‍👤')">🐱‍👤</span><span onclick="setAvatar('👨‍🎓')">👨‍🎓</span><span onclick="setAvatar('👩‍🎓')">👩‍🎓</span><span onclick="setAvatar('🦸‍♂️')">🦸‍♂️</span><span onclick="setAvatar('🥷')">🥷</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data State
+        function safeJSON(key, fallback) {
+            try {
+                const val = localStorage.getItem(key);
+                return val ? JSON.parse(val) : fallback;
+            } catch (e) { return fallback; }
+        }
+
+        let userData = safeJSON('masar_user', null);
+        let tasks = safeJSON('masar_tasks', []);
+        let lectures = safeJSON('masar_lectures', []);
+        let notes = safeJSON('masar_notes', []);
+        let activity = safeJSON('masar_activity', {});
+        let isMuted = localStorage.getItem('masar_muted') === 'true';
+        let currentLang = localStorage.getItem('masar_lang') || 'ar';
+        let currentTheme = localStorage.getItem('masar_theme') || 'light';
+
+        const cityCoords = {
+            "Cairo": { lat: 30.0444, lng: 31.2357 },
+            "Alexandria": { lat: 31.2001, lng: 29.9187 },
+            "Giza": { lat: 30.0131, lng: 31.2089 },
+            "Mansoura": { lat: 31.0409, lng: 31.3785 },
+            "Tanta": { lat: 30.7865, lng: 31.0004 },
+            "Assiut": { lat: 27.1783, lng: 31.1859 },
+            "Sohag": { lat: 26.5591, lng: 31.6957 },
+            "Zagazig": { lat: 30.5877, lng: 31.5020 },
+            "Aswan": { lat: 24.0889, lng: 32.8998 },
+            "Luxor": { lat: 25.6872, lng: 32.6396 },
+            "Ismailia": { lat: 30.6043, lng: 32.2723 },
+            "Suez": { lat: 29.9668, lng: 32.5498 },
+            "Port Said": { lat: 31.2653, lng: 32.3019 }
+        };
+
+        // Translations
+        const i18n = {
+            ar: {
+                welcome: "مرحباً بك في مسار",
+                onboarding_1: "لنبدأ بتجهيز ملفك الشخصي",
+                lbl_name: "الاسم",
+                lbl_age: "العمر",
+                btn_next: "التالي",
+                academic: "البيانات الدراسية",
+                lbl_college: "الكلية",
+                lbl_dept: "القسم",
+                lbl_city: "المحافظة / المدينة *",
+                final: "خطوات أخيرة",
+                lbl_phone: "رقم الهاتف (اختياري)",
+                lbl_address: "العنوان (اختياري)",
+                btn_finish: "ابدأ المسار 🛤️",
+                nav_home: "الرئيسية",
+                nav_sch: "الجدول",
+                nav_tasks: "المهام",
+                nav_stats: "النشاط",
+                nav_prof: "حسابي",
+                today_tasks: "مهام اليوم",
+                prayers: "مواقيت الصلاة",
+                pg_schedule: "الجدول الدراسي",
+                pg_tasks: "المهام (التسكات)",
+                pg_notes: "الملاحظات",
+                pg_stats: "الإحصائيات والنشاط",
+                btn_lang: "اللغة: العربية",
+                txt_dev: "صانع البرنامج: محمد سعيد",
+                txt_export: "تصدير بياناتي",
+                txt_import: "استيراد بيانات",
+                txt_footer: "جميع بياناتك محفوظة محلياً على جهازك فقط"
+            },
+            en: {
+                welcome: "Welcome to Masar",
+                onboarding_1: "Let's set up your profile",
+                lbl_name: "Name",
+                lbl_age: "Age",
+                btn_next: "Next",
+                academic: "Academic Info",
+                lbl_college: "College",
+                lbl_dept: "Department",
+                lbl_city: "City / Governorate *",
+                final: "Final Steps",
+                lbl_phone: "Phone (Optional)",
+                lbl_address: "Address (Optional)",
+                btn_finish: "Start Masar 🛤️",
+                nav_home: "Home",
+                nav_sch: "Schedule",
+                nav_tasks: "Tasks",
+                nav_stats: "Activity",
+                nav_prof: "Profile",
+                today_tasks: "Today's Tasks",
+                prayers: "Prayer Times",
+                pg_schedule: "Academic Schedule",
+                pg_tasks: "Tasks (Assignments)",
+                pg_notes: "Notes",
+                pg_stats: "Stats & Activity",
+                btn_lang: "Language: English",
+                txt_dev: "Developer: Mohamed Saied",
+                txt_export: "Export My Data",
+                txt_import: "Import Data",
+                txt_footer: "All your data is stored locally on your device only"
+            }
+        };
+
+        // App Initialization
+        window.onload = function() {
+            console.log("Window loaded");
+            applyTheme();
+            applyLanguage();
+
+            if (!userData) {
+                showOnboarding();
+            } else {
+                showApp();
+            }
+
+            startClock();
+            updatePrayerTimes();
+            renderAll();
+        };
+
+        function showOnboarding() {
+            const screen = document.getElementById('onboarding-screen');
+            screen.classList.remove('hidden');
+            screen.style.opacity = '0';
+            setTimeout(() => {
+                screen.style.transition = 'opacity 0.5s ease-in-out';
+                screen.style.opacity = '1';
+            }, 10);
+            document.getElementById('app-container').classList.add('hidden');
+        }
+
+        function nextStep(step) {
+            const currentStep = document.querySelector('.step-container:not(.hidden)');
+
+            // Update progress bar
+            document.getElementById('progress-val').style.width = (step * 33.33) + '%';
+
+            // Simple validation for name/age in step 1
+            if (step > 1) {
+                if (currentStep.id === 'step-1') {
+                    const name = document.getElementById('in-name');
+                    if (!name.value) {
+                        name.classList.add('shake');
+                        setTimeout(() => name.classList.remove('shake'), 300);
+                        return;
+                    }
+                }
+                if (currentStep.id === 'step-2') {
+                    const city = document.getElementById('in-city');
+                    if (!city.value) {
+                        city.classList.add('shake');
+                        setTimeout(() => city.classList.remove('shake'), 300);
+                        return;
+                    }
+                }
+            }
+
+            playSound('click');
+
+            if (currentStep) {
+                currentStep.classList.add('fade-out-left');
+                setTimeout(() => {
+                    document.querySelectorAll('.step-container').forEach(s => {
+                        s.classList.add('hidden');
+                        s.classList.remove('fade-out-left');
+                    });
+                    const next = document.getElementById('step-' + step);
+                    next.classList.remove('hidden');
+                }, 400);
+            } else {
+                document.querySelectorAll('.step-container').forEach(s => s.classList.add('hidden'));
+                document.getElementById('step-' + step).classList.remove('hidden');
+            }
+        }
+
+        function finishOnboarding() {
+            const name = document.getElementById('in-name').value;
+            userData = {
+                name: name,
+                age: document.getElementById('in-age').value,
+                college: document.getElementById('in-college').value,
+                dept: document.getElementById('in-dept').value,
+                city: document.getElementById('in-city').value,
+                phone: document.getElementById('in-phone').value,
+                address: document.getElementById('in-address').value,
+                avatar: '👤'
+            };
+
+            localStorage.setItem('masar_user', JSON.stringify(userData));
+
+            // Celebration
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            playSound('success');
+
+            const screen = document.getElementById('onboarding-screen');
+            screen.style.transition = 'all 0.8s ease-in-out';
+            screen.style.transform = 'translateY(-100%)';
+            screen.style.opacity = '0';
+
+            setTimeout(() => {
+                showApp();
+                updatePrayerTimes();
+                screen.classList.add('hidden');
+            }, 800);
+        }
+
+        function showApp() {
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            const container = document.getElementById('app-container');
+            container.classList.remove('hidden');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                container.style.transition = 'all 0.5s ease-out';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 50);
+            document.getElementById('prof-name-input').value = userData.name;
+            document.getElementById('prof-details-input').value = `${userData.college} - ${userData.dept}`;
+            document.getElementById('prof-city-input').value = userData.city;
+            document.getElementById('avatar-btn').innerText = userData.avatar || '👤';
+            document.getElementById('profile-pic').innerText = userData.avatar || '👤';
+        }
+
+        function updateProfile() {
+            userData.name = document.getElementById('prof-name-input').value;
+            const details = document.getElementById('prof-details-input').value.split(' - ');
+            userData.college = details[0] || "";
+            userData.dept = details[1] || "";
+            userData.city = document.getElementById('prof-city-input').value;
+
+            localStorage.setItem('masar_user', JSON.stringify(userData));
+            updatePrayerTimes();
+            playSound('success');
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            playSound('click');
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                document.getElementById('page-' + pageId).classList.remove('hidden');
+
+                mainContent.style.transition = 'all 0.3s ease-out';
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }, 150);
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navItem = Array.from(document.querySelectorAll('.nav-item')).find(n => n.getAttribute('onclick').includes(pageId));
+            if(navItem) navItem.classList.add('active');
+
+            if (pageId === 'stats') renderActivityMap();
+        }
+
+        // Clock & Date
+        function startClock() {
+            const update = () => {
+                const now = new Date();
+                let h = now.getHours();
+                let m = now.getMinutes();
+                let ampm = h >= 12 ? 'م' : 'ص';
+                if (currentLang === 'en') ampm = h >= 12 ? 'PM' : 'AM';
+
+                // Greeting logic
+                let greeting = "";
+                if (h >= 5 && h < 12) greeting = currentLang === 'ar' ? "صباح الخير" : "Good Morning";
+                else if (h >= 12 && h < 17) greeting = currentLang === 'ar' ? "مساء الخير" : "Good Afternoon";
+                else greeting = currentLang === 'ar' ? "مساء النور" : "Good Evening";
+
+                h = h % 12;
+                h = h ? h : 12;
+                m = m < 10 ? '0' + m : m;
+                document.getElementById('clock').innerText = `${h}:${m} ${ampm}`;
+
+                // Simplified Hijri Date
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dateStr = now.toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US', options);
+                document.getElementById('full-date').innerText = `${greeting} · ${dateStr}`;
+            };
+            update();
+            setInterval(update, 1000);
+        }
+
+        // Prayer Times Logic (Static for demo, real would use Aladhan API)
+        async function updatePrayerTimes() {
+            if (!userData || !userData.city) return;
+
+            const city = userData.city;
+            const coords = cityCoords[city] || cityCoords['Cairo'];
+
+            try {
+                // Aladhan API call
+                const res = await fetch(`https://api.aladhan.com/v1/timings?latitude=${coords.lat}&longitude=${coords.lng}&method=5`);
+                const data = await res.json();
+                const t = data.data.timings;
+
+                setPrayerTime('p-fajr', t.Fajr);
+                setPrayerTime('p-dhuhr', t.Dhuhr);
+                setPrayerTime('p-asr', t.Asr);
+                setPrayerTime('p-maghrib', t.Maghrib);
+                setPrayerTime('p-isha', t.Isha);
+
+                updateNextPrayer(t);
+            } catch (e) {
+                console.log("Prayer API error", e);
+            }
+        }
+
+        function setPrayerTime(id, time24) {
+            const [h, m] = time24.split(':');
+            let hour = parseInt(h);
+            let ampm = hour >= 12 ? (currentLang === 'ar' ? 'م' : 'PM') : (currentLang === 'ar' ? 'ص' : 'AM');
+            hour = hour % 12 || 12;
+            document.getElementById(id).innerText = `${hour}:${m} ${ampm}`;
+        }
+
+        function updateNextPrayer(timings) {
+            const now = new Date();
+            const names = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            const namesAr = { 'Fajr': 'الفجر', 'Dhuhr': 'الظهر', 'Asr': 'العصر', 'Maghrib': 'المغرب', 'Isha': 'العشاء' };
+
+            let next = null;
+            for (let name of names) {
+                const [h, m] = timings[name].split(':');
+                const pTime = new Date();
+                pTime.setHours(h, m, 0);
+                if (pTime > now) {
+                    next = { name: currentLang === 'ar' ? namesAr[name] : name, time: pTime };
+                    break;
+                }
+            }
+
+            if (!next) { // If all prayers passed, next is Fajr tomorrow
+                const [h, m] = timings['Fajr'].split(':');
+                const pTime = new Date();
+                pTime.setDate(pTime.getDate() + 1);
+                pTime.setHours(h, m, 0);
+                next = { name: currentLang === 'ar' ? namesAr['Fajr'] : 'Fajr', time: pTime };
+            }
+
+            document.getElementById('next-prayer-name').innerText = next.name;
+
+            // Countdown
+            const interval = setInterval(() => {
+                const diff = next.time - new Date();
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    updatePrayerTimes();
+                    return;
+                }
+                const hh = Math.floor(diff / 3600000);
+                const mm = Math.floor((diff % 3600000) / 60000);
+                const ss = Math.floor((diff % 60000) / 1000);
+                document.getElementById('prayer-countdown').innerText = `${hh}:${mm < 10 ? '0'+mm : mm}:${ss < 10 ? '0'+ss : ss}`;
+            }, 1000);
+        }
+
+        // CRUD Logic
+        function openAddModal() {
+            playSound('click');
+            document.getElementById('add-modal').style.display = 'flex';
+            toggleAddFields();
+        }
+
+        function toggleAddFields() {
+            const type = document.getElementById('add-type').value;
+            const container = document.getElementById('add-fields');
+            if (type === 'task') {
+                container.innerHTML = `
+                    <div class="input-group"><label>اسم المهمة</label><input id="f-title" type="text"></div>
+                    <div class="input-group"><label>الأولوية</label><select id="f-prio"><option value="1">عادية</option><option value="2">هامة</option><option value="3">عاجلة جداً</option></select></div>
+                `;
+            } else if (type === 'lecture') {
+                container.innerHTML = `
+                    <div class="input-group"><label>المادة</label><input id="f-title" type="text"></div>
+                    <div class="input-group"><label>اليوم</label><select id="f-day"><option value="0">الأحد</option><option value="1">الإثنين</option><option value="2">الثلاثاء</option><option value="3">الأربعاء</option><option value="4">الخميس</option></select></div>
+                    <div class="input-group"><label>الوقت</label><input id="f-time" type="time"></div>
+                `;
+            } else {
+                container.innerHTML = `<div class="input-group"><label>نص الملاحظة</label><textarea id="f-title" style="width:100%;height:100px;border-radius:12px;padding:10px"></textarea></div>`;
+            }
+        }
+
+        function saveNewItem() {
+            const type = document.getElementById('add-type').value;
+            const title = document.getElementById('f-title').value;
+            if (!title) return;
+
+            if (type === 'task') {
+                tasks.push({ id: Date.now(), title, prio: document.getElementById('f-prio').value, done: false });
+                localStorage.setItem('masar_tasks', JSON.stringify(tasks));
+            } else if (type === 'lecture') {
+                lectures.push({ id: Date.now(), title, day: document.getElementById('f-day').value, time: document.getElementById('f-time').value });
+                localStorage.setItem('masar_lectures', JSON.stringify(lectures));
+            } else {
+                notes.push({ id: Date.now(), title, date: new Date().toLocaleDateString() });
+                localStorage.setItem('masar_notes', JSON.stringify(notes));
+            }
+
+            logActivity();
+            playSound('success');
+            document.getElementById('add-modal').style.display = 'none';
+            renderAll();
+        }
+
+        function renderAll() {
+            // Home counts
+            const pendingTasks = tasks.filter(t => !t.done).length;
+            document.getElementById('count-tasks').innerText = pendingTasks;
+            document.getElementById('count-lectures').innerText = lectures.length; // Simplified
+
+            // Rose bouquet logic
+            const totalTasks = tasks.length;
+            const doneTasks = tasks.filter(t => t.done).length;
+            const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+            document.getElementById('attendance-pct').innerText = pct + '%';
+
+            let emoji = '🌱';
+            if (pct > 25) emoji = '🌿';
+            if (pct > 50) emoji = '🌸';
+            if (pct > 75) emoji = '💐';
+            if (pct === 100 && totalTasks > 0) emoji = '🏆';
+            document.getElementById('rose-bouquet').innerText = emoji;
+
+            // Tasks List
+            const tList = document.getElementById('tasks-list');
+            tList.innerHTML = tasks.length ? '' : '<p style="text-align:center">لا يوجد مهام</p>';
+            tasks.forEach(t => {
+                tList.innerHTML += `
+                    <div class="list-item" style="border-right-color: ${t.prio == 3 ? 'red' : (t.prio == 2 ? 'orange' : 'green')}">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onclick="toggleTask(${t.id})">
+                        <span style="${t.done ? 'text-decoration: line-through; opacity: 0.5' : ''}">${t.title}</span>
+                        <i class="fas fa-trash" style="margin-right:auto; color: #ccc" onclick="deleteItem('task', ${t.id})"></i>
+                    </div>
+                `;
+            });
+
+            // Schedule
+            const sList = document.getElementById('lectures-list');
+            sList.innerHTML = lectures.length ? '' : '<p style="text-align:center">الجدول فارغ</p>';
+            const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+            lectures.forEach(l => {
+                sList.innerHTML += `
+                    <div class="list-item">
+                        <i class="fas fa-book"></i>
+                        <div>
+                            <div style="font-weight:700">${l.title}</div>
+                            <div style="font-size:12px; color:var(--text-muted)">${dayNames[l.day]} · ${l.time}</div>
+                        </div>
+                        <i class="fas fa-trash" style="margin-right:auto; color: #ccc" onclick="deleteItem('lecture', ${l.id})"></i>
+                    </div>
+                `;
+            });
+
+            // Notes
+            const nList = document.getElementById('notes-list');
+            nList.innerHTML = notes.length ? '' : '<p style="text-align:center">لا يوجد ملاحظات</p>';
+            notes.forEach(n => {
+                nList.innerHTML += `
+                    <div class="list-item">
+                        <i class="fas fa-sticky-note"></i>
+                        <div style="flex:1">${n.title}</div>
+                        <i class="fas fa-trash" style="color: #ccc" onclick="deleteItem('note', ${n.id})"></i>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            task.done = !task.done;
+            localStorage.setItem('masar_tasks', JSON.stringify(tasks));
+            if (task.done) {
+                playSound('success');
+                confetti({
+                    particleCount: 40,
+                    spread: 50,
+                    origin: { y: 0.8 },
+                    colors: ['#2E7D32', '#D4AF37']
+                });
+            }
+            renderAll();
+        }
+
+        function deleteItem(type, id) {
+            playSound('delete');
+            if (type === 'task') tasks = tasks.filter(t => t.id !== id);
+            if (type === 'lecture') lectures = lectures.filter(l => l.id !== id);
+            if (type === 'note') notes = notes.filter(n => n.id !== id);
+            localStorage.setItem(`masar_${type}s`, JSON.stringify(type === 'task' ? tasks : (type === 'lecture' ? lectures : notes)));
+            renderAll();
+        }
+
+        function closeModal(e, id) {
+            if (e.target.id === id) document.getElementById(id).style.display = 'none';
+        }
+
+        // Activity Logging
+        function logActivity() {
+            const today = new Date().toISOString().split('T')[0];
+            activity[today] = (activity[today] || 0) + 1;
+            localStorage.setItem('masar_activity', JSON.stringify(activity));
+        }
+
+        function renderActivityMap() {
+            const grid = document.getElementById('activity-grid');
+            grid.innerHTML = '';
+            const now = new Date();
+            for (let i = 139; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                const cell = document.createElement('div');
+                cell.className = 'map-cell';
+                if (activity[dateStr]) {
+                    cell.classList.add('active');
+                    cell.title = `${dateStr}: ${activity[dateStr]} interactions`;
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        // Profile Actions
+        function toggleMute() {
+            playSound('click');
+            isMuted = !isMuted;
+            localStorage.setItem('masar_muted', isMuted);
+            document.getElementById('mute-btn').innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+            if (!isMuted) playSound('unmute');
+        }
+
+        function toggleTheme() {
+            playSound('click');
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('masar_theme', currentTheme);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            document.body.setAttribute('data-theme', currentTheme);
+        }
+
+        function toggleLanguage() {
+            playSound('click');
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('masar_lang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const lang = i18n[currentLang];
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            const mapping = {
+                welcome: 'txt-welcome',
+                onboarding_1: 'txt-onboarding-1',
+                lbl_name: 'lbl-name',
+                lbl_age: 'lbl-age',
+                btn_next: ['btn-next-1', 'btn-next-2'],
+                academic: 'txt-academic',
+                lbl_college: 'lbl-college',
+                lbl_dept: 'lbl-dept',
+                lbl_city: 'lbl-city',
+                final: 'txt-final',
+                lbl_phone: 'lbl-phone',
+                lbl_address: 'lbl-address',
+                btn_finish: 'btn-finish',
+                nav_home: 'nav-home',
+                nav_sch: 'nav-sch',
+                nav_tasks: 'nav-tasks',
+                nav_stats: 'nav-stats',
+                nav_prof: 'nav-prof',
+                today_tasks: 'txt-today-tasks',
+                prayers: 'txt-prayers',
+                pg_schedule: 'txt-pg-schedule',
+                pg_tasks: 'txt-pg-tasks',
+                pg_notes: 'txt-pg-notes',
+                pg_stats: 'txt-pg-stats',
+                btn_lang: 'btn-lang',
+                txt_dev: 'txt-dev',
+                txt_export: 'txt-export',
+                txt_import: 'txt-import',
+                txt_footer: 'txt-footer'
+            };
+
+            for (let key in mapping) {
+                const ids = Array.isArray(mapping[key]) ? mapping[key] : [mapping[key]];
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && lang[key]) el.innerText = lang[key];
+                });
+            }
+
+            renderAll();
+        }
+
+        function openAvatarPicker() {
+            document.getElementById('avatar-modal').style.display = 'flex';
+        }
+
+        function setAvatar(emoji) {
+            userData.avatar = emoji;
+            localStorage.setItem('masar_user', JSON.stringify(userData));
+            document.getElementById('avatar-btn').innerText = emoji;
+            document.getElementById('profile-pic').innerText = emoji;
+            document.getElementById('avatar-modal').style.display = 'none';
+            playSound('success');
+        }
+
+        function openInstagram() {
+            window.open("https://www.instagram.com/mohamed_s_60?igsh=MWg3ZmxqeGE4ZGxwaA==", "_blank");
+        }
+
+        // Sound Engine
+        const sounds = {
+            click: [440, 0.05],
+            success: [660, 0.1, 880, 0.1],
+            delete: [220, 0.1, 110, 0.2],
+            next: [550, 0.05],
+            unmute: [440, 0.1, 554, 0.1, 659, 0.2]
+        };
+
+        function playSound(type) {
+            try {
+                if (isMuted) return;
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const sequence = sounds[type];
+                let time = ctx.currentTime;
+                for (let i = 0; i < sequence.length; i += 2) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.frequency.setValueAtTime(sequence[i], time);
+                    gain.gain.setValueAtTime(0.1, time);
+                    gain.gain.exponentialRampToValueAtTime(0.01, time + sequence[i + 1]);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(time);
+                    osc.stop(time + sequence[i + 1]);
+                    time += sequence[i + 1];
+                }
+                // Close context after playing to save resources
+                setTimeout(() => ctx.close(), time * 1000 + 500);
+            } catch (e) {
+                console.error("Audio error", e);
+            }
+        }
+
+        // End Term
+        function confirmEndTerm() {
+            if (confirm("هل أنت متأكد من إنهاء الترم؟ سيتم مسح الجدول والمهام والبدء من جديد.")) {
+                if (confirm("تأكيد أخير؟")) {
+                    tasks = [];
+                    lectures = [];
+                    notes = [];
+                    localStorage.setItem('masar_tasks', '[]');
+                    localStorage.setItem('masar_lectures', '[]');
+                    localStorage.setItem('masar_notes', '[]');
+
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+
+                    alert("مبارك إتمام الترم! 🎉💐");
+                    renderAll();
+                    showPage('home');
+                }
+            }
+        }
+
+        // Export/Import
+        function exportData() {
+            const data = { userData, tasks, lectures, notes, activity };
+            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `masar_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    const data = JSON.parse(event.target.result);
+                    localStorage.setItem('masar_user', JSON.stringify(data.userData));
+                    localStorage.setItem('masar_tasks', JSON.stringify(data.tasks));
+                    localStorage.setItem('masar_lectures', JSON.stringify(data.lectures));
+                    localStorage.setItem('masar_notes', JSON.stringify(data.notes));
+                    localStorage.setItem('masar_activity', JSON.stringify(data.activity));
+                    location.reload();
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+    </script>
+</body>
+</html>
