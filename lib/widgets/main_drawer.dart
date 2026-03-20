@@ -6,7 +6,6 @@ import '../screens/sections_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../screens/settings_screen.dart';
-import '../screens/chat_restore_guide_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -46,9 +45,6 @@ class MainDrawer extends StatelessWidget {
             _drawerItem(Icons.assignment, "الامتحانات", () {}),
             _drawerItem(Icons.bookmark, "المحفوظات", () {
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => BookmarksScreen()));
-            }),
-            _drawerItem(Icons.restore, "استعادة المحادثات", () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatRestoreGuideScreen()));
             }),
             Divider(),
             _buildDeveloperInfo(),
