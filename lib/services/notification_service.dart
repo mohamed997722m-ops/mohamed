@@ -1,4 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -11,6 +13,7 @@ class NotificationService {
   NotificationService._internal();
 
   Future<void> init() async {
+    if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
@@ -18,7 +21,7 @@ class NotificationService {
   }
 
   Future<void> showNotification(int id, String title, String body, {bool silent = false}) async {
-    if (silent) return;
+    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'masar_channel',
       'Masar Notifications',
@@ -30,7 +33,7 @@ class NotificationService {
   }
 
   Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
-    if (silent) return;
+    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
