@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import 'dart:ui' as ui;
 import '../services/database_service.dart';
 
 class BookmarksScreen extends StatefulWidget {
@@ -28,7 +30,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('المحفوظات')),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: _bookmarks.isEmpty
             ? Center(child: Text('لا يوجد روابط محفوظة'))
             : ListView.builder(
