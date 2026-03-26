@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/home_screen.dart';
@@ -57,18 +61,20 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
+    if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
+    final dynamic sharingIntent = ReceiveSharingIntent;
+    _intentDataStreamSubscription = sharingIntent.getTextStream().listen((String value) {
       _saveSharedLink(value);
     }, onError: (err) {
       print("getLinkStream error: $err");
     });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
+    sharingIntent.getInitialText().then((String? value) {
       if (value != null) {
         _saveSharedLink(value);
       }
@@ -86,7 +92,7 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
