@@ -9,6 +9,8 @@ import 'services/database_service.dart';
 import 'utils/app_theme.dart';
 import 'utils/morning_messages.dart';
 import 'dart:math';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'dart:async';
 
@@ -57,22 +59,25 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
-
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
+    if (!kIsWeb && !Platform.environment.containsKey('FLUTTER_TEST')) {
+      final dynamic sharingIntent = ReceiveSharingIntent;
+      _intentDataStreamSubscription = sharingIntent.getTextStream().listen((String value) {
         _saveSharedLink(value);
-      }
-    });
+      }, onError: (err) {
+        print("getLinkStream error: $err");
+      });
+
+      sharingIntent.getInitialText().then((String? value) {
+        if (value != null) {
+          _saveSharedLink(value);
+        }
+      });
+    }
   }
 
   void _saveSharedLink(String link) async {
@@ -86,7 +91,7 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
