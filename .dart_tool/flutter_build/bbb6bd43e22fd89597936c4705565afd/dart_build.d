@@ -1,0 +1,1 @@
+ /app/.dart_tool/flutter_build/bbb6bd43e22fd89597936c4705565afd/dart_build_result.json:  /app/.dart_tool/package_config.json /app/pubspec.yaml /opt/flutter/bin/cache/dart-sdk/version
