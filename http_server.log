@@ -1,0 +1,6 @@
+127.0.0.1 - - [04/Apr/2026 22:43:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Apr/2026 22:43:43] code 404, message File not found
+127.0.0.1 - - [04/Apr/2026 22:43:43] "GET /mohamed/flutter_bootstrap.js HTTP/1.1" 404 -
+127.0.0.1 - - [04/Apr/2026 22:43:45] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [04/Apr/2026 22:43:46] code 404, message File not found
+127.0.0.1 - - [04/Apr/2026 22:43:46] "GET /mohamed/flutter_bootstrap.js HTTP/1.1" 404 -
