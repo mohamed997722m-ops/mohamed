@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
@@ -15,14 +17,18 @@ import 'dart:async';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  bool isTest = Platform.environment.containsKey('FLUTTER_TEST');
+
   final profileProvider = ProfileProvider();
   await profileProvider.loadProfile();
 
   final settingsProvider = SettingsProvider();
   await settingsProvider.loadSettings();
 
-  await NotificationService().init();
-  _scheduleMorningMessage();
+  if (!kIsWeb && !isTest) {
+    await NotificationService().init();
+    _scheduleMorningMessage();
+  }
 
   runApp(
     MultiProvider(
@@ -57,22 +63,26 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
-
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
+    bool isTest = Platform.environment.containsKey('FLUTTER_TEST');
+    if (!kIsWeb && !isTest) {
+      final dynamic intentPlugin = ReceiveSharingIntent;
+      _intentDataStreamSubscription = (intentPlugin as dynamic).getTextStream().listen((String value) {
         _saveSharedLink(value);
-      }
-    });
+      }, onError: (err) {
+        print("getLinkStream error: $err");
+      });
+
+      (intentPlugin as dynamic).getInitialText().then((String? value) {
+        if (value != null) {
+          _saveSharedLink(value);
+        }
+      });
+    }
   }
 
   void _saveSharedLink(String link) async {
@@ -86,7 +96,7 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
