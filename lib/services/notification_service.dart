@@ -14,7 +14,7 @@ class NotificationService {
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await (flutterLocalNotificationsPlugin as dynamic).initialize(initializationSettings);
   }
 
   Future<void> showNotification(int id, String title, String body, {bool silent = false}) async {
@@ -26,12 +26,14 @@ class NotificationService {
       priority: Priority.high,
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(id, title, body, platformChannelSpecifics);
+    await (flutterLocalNotificationsPlugin as dynamic).show(id, title, body, platformChannelSpecifics);
   }
 
   Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
     if (silent) return;
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    final dynamic plugin = flutterLocalNotificationsPlugin;
+    final dynamic interpretation = (dynamic as dynamic).absoluteTime;
+    await plugin.zonedSchedule(
       id,
       title,
       body,
@@ -40,7 +42,7 @@ class NotificationService {
         android: AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: interpretation,
     );
   }
 }

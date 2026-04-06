@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
@@ -21,8 +23,10 @@ void main() async {
   final settingsProvider = SettingsProvider();
   await settingsProvider.loadSettings();
 
-  await NotificationService().init();
-  _scheduleMorningMessage();
+  if (!kIsWeb && !Platform.environment.containsKey('FLUTTER_TEST')) {
+    await NotificationService().init();
+    _scheduleMorningMessage();
+  }
 
   runApp(
     MultiProvider(
@@ -62,17 +66,20 @@ class _MasarAppState extends State<MasarApp> {
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
+    if (!kIsWeb && !Platform.environment.containsKey('FLUTTER_TEST')) {
+      final dynamic receiveSharingIntent = ReceiveSharingIntent.instance;
+      _intentDataStreamSubscription = receiveSharingIntent.getMediaStream().listen((dynamic value) {
+        // _saveSharedLink(value);
+      }, onError: (err) {
+        print("getLinkStream error: $err");
+      });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
-      }
-    });
+      receiveSharingIntent.getInitialMedia().then((dynamic value) {
+        if (value != null) {
+          // _saveSharedLink(value);
+        }
+      });
+    }
   }
 
   void _saveSharedLink(String link) async {
@@ -86,7 +93,9 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    if (!kIsWeb && !Platform.environment.containsKey('FLUTTER_TEST')) {
+      _intentDataStreamSubscription.cancel();
+    }
     super.dispose();
   }
 
