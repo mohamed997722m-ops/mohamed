@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
+import '../screens/chat_restore_guide_screen.dart';
 import '../screens/lectures_screen.dart';
 import '../screens/tasks_screen.dart';
 import '../screens/sections_screen.dart';
@@ -45,6 +46,9 @@ class MainDrawer extends StatelessWidget {
             _drawerItem(Icons.assignment, "الامتحانات", () {}),
             _drawerItem(Icons.bookmark, "المحفوظات", () {
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => BookmarksScreen()));
+            }),
+            _drawerItem(Icons.restore, "استعادة المحادثات", () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatRestoreGuideScreen()));
             }),
             Divider(),
             _buildDeveloperInfo(),
