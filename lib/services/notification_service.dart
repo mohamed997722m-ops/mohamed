@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -10,15 +12,18 @@ class NotificationService {
 
   NotificationService._internal();
 
+  bool get _shouldBypass => kIsWeb || Platform.environment.containsKey('FLUTTER_TEST');
+
   Future<void> init() async {
+    if (_shouldBypass) return;
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await (flutterLocalNotificationsPlugin as dynamic).initialize(initializationSettings);
   }
 
   Future<void> showNotification(int id, String title, String body, {bool silent = false}) async {
-    if (silent) return;
+    if (silent || _shouldBypass) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'masar_channel',
       'Masar Notifications',
@@ -26,12 +31,12 @@ class NotificationService {
       priority: Priority.high,
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(id, title, body, platformChannelSpecifics);
+    await (flutterLocalNotificationsPlugin as dynamic).show(id, title, body, platformChannelSpecifics);
   }
 
   Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
-    if (silent) return;
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    if (silent || _shouldBypass) return;
+    await (flutterLocalNotificationsPlugin as dynamic).zonedSchedule(
       id,
       title,
       body,
@@ -39,8 +44,8 @@ class NotificationService {
       const NotificationDetails(
         android: AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: (AndroidScheduleMode as dynamic).exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: (dynamic as dynamic).absoluteTime,
     );
   }
 }
