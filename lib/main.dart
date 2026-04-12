@@ -11,6 +11,7 @@ import 'utils/morning_messages.dart';
 import 'dart:math';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,10 +37,10 @@ void main() async {
 }
 
 void _scheduleMorningMessage() {
+  if (kIsWeb) return;
   final random = Random();
   final message = MorningMessages.messages[random.nextInt(MorningMessages.messages.length)];
 
-  // Schedule for 8:15 AM
   final now = DateTime.now();
   final scheduledTime = DateTime(now.year, now.month, now.day, 8, 15);
 
@@ -57,36 +58,32 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
+    if (!kIsWeb) {
+      try {
+        final dynamic sharingIntent = ReceiveSharingIntent.instance;
+        _intentDataStreamSubscription = sharingIntent.getMediaStream().listen((value) {
+          // Handle sharing if needed
+        }, onError: (err) {
+          print("getLinkStream error: $err");
+        });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
+        sharingIntent.getInitialMedia().then((value) {
+          // Handle initial sharing if needed
+        });
+      } catch (e) {
+        print("Sharing intent error: $e");
       }
-    });
-  }
-
-  void _saveSharedLink(String link) async {
-    final db = await DatabaseService().database;
-    await db.insert('bookmarks', {
-      'url': link,
-      'title': 'رابط مشترك',
-      'type': 'link',
-    });
+    }
   }
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
