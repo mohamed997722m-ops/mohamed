@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class ChatRestoreGuideScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
