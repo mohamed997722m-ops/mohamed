@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 class UserProfile {
   final String name;
   final String academicYear;

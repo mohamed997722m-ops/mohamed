@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:location/location.dart';
