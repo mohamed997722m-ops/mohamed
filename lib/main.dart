@@ -1,3 +1,4 @@
+import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
@@ -62,15 +63,17 @@ class _MasarAppState extends State<MasarApp> {
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((value) {
+      if (value.isNotEmpty && value.first.path.isNotEmpty) {
+        _saveSharedLink(value.first.path);
+      }
     }, onError: (err) {
       print("getLinkStream error: $err");
     });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
+    ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+      if (value.isNotEmpty && value.first.path.isNotEmpty) {
+        _saveSharedLink(value.first.path);
       }
     });
   }
