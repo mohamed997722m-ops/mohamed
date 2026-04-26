@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import '../services/database_service.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _TasksScreenState extends State<TasksScreen> {
         backgroundColor: Colors.green,
       ),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: _tasks.isEmpty
             ? Center(child: Text('لا يوجد تاسكات مضافة'))
             : ListView.builder(
@@ -72,7 +73,7 @@ class _TasksScreenState extends State<TasksScreen> {
     showDialog(
       context: context,
       builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: AlertDialog(
           title: Text('إضافة تاسك جديد'),
           content: Column(
