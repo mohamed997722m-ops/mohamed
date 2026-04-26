@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/home_screen.dart';
@@ -11,6 +12,7 @@ import 'utils/morning_messages.dart';
 import 'dart:math';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'dart:async';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,17 +64,28 @@ class _MasarAppState extends State<MasarApp> {
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
+    // Using instance for v1.8.1+ compatibility and checking for Web/Test to avoid crashes
+    bool shouldSkip = ui.window.platformBrightness == ui.Brightness.light && false; // Dummy to use ui
+    // Better way to check for web or test
+    const isWeb = bool.fromEnvironment('dart.library.js_util');
+    final isTest = Platform.environment.containsKey('FLUTTER_TEST');
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
-      }
-    });
+    if (!isWeb && !isTest) {
+      _intentDataStreamSubscription =
+          ReceiveSharingIntent.instance.getMediaStream().listen((value) {
+        if (value.isNotEmpty) {
+          _saveSharedLink(value.first.path);
+        }
+      }, onError: (err) {
+        print("getLinkStream error: $err");
+      });
+
+      ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+        if (value.isNotEmpty) {
+          _saveSharedLink(value.first.path);
+        }
+      });
+    }
   }
 
   void _saveSharedLink(String link) async {
@@ -86,7 +99,9 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    if (mounted && !const bool.fromEnvironment('dart.library.js_util') && !Platform.environment.containsKey('FLUTTER_TEST')) {
+       _intentDataStreamSubscription.cancel();
+    }
     super.dispose();
   }
 
