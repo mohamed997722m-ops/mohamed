@@ -6,3 +6,7 @@ local.properties
 build
 captures
 .externalNativeBuild
+.dart_tool/
+*.log
+pubspec.lock
+build_log.txt
