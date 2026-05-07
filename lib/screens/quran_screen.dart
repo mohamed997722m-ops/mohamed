@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/database_service.dart';
@@ -33,14 +34,14 @@ class _QuranScreenState extends State<QuranScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('ورد القرآن')),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               if (_lastProgress != null)
                 Card(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   child: ListTile(
                     title: Text('آخر ما وصلت إليه:'),
                     subtitle: Text('سورة ${_lastProgress!['surah']} - آية ${_lastProgress!['verse']}'),
