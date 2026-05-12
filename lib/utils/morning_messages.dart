@@ -1,3 +1,4 @@
+import "dart:ui" as ui;
 class MorningMessages {
   static const List<String> messages = [
     "يقول الله تعالى: 'وَاصْبِرْ لِحُكْمِ رَبِّكَ فَإِنَّكَ بِأَعْيُنِنَا'",
