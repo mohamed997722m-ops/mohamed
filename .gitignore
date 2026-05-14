@@ -6,3 +6,8 @@ local.properties
 build
 captures
 .externalNativeBuild
+.dart_tool/
+*.log
+*.png
+test/main_test.dart
+verify_chat_restore.py
