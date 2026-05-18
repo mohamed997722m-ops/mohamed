@@ -6,3 +6,10 @@ local.properties
 build
 captures
 .externalNativeBuild
+.dart_tool/
+.packages
+pubspec.lock
+flutter_export_environment.sh
+server.log
+verification/
+*.log
