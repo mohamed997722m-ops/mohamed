@@ -1,4 +1,3 @@
-import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
@@ -14,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: Colors.green,
       ),
       body: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         child: ListView(
           children: [
             SwitchListTile(
@@ -53,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         child: SimpleDialog(
           title: Text('اختر وقت التذكير'),
           children: [

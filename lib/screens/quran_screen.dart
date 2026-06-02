@@ -1,4 +1,3 @@
-import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/database_service.dart';
@@ -34,7 +33,7 @@ class _QuranScreenState extends State<QuranScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('ورد القرآن')),
       body: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

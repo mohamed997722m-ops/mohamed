@@ -1,4 +1,3 @@
-import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../services/notification_service.dart';
@@ -33,7 +32,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
         backgroundColor: Colors.green,
       ),
       body: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         child: _lectures.isEmpty
             ? Center(child: Text('لا يوجد محاضرات مضافة'))
             : ListView.builder(
@@ -66,7 +65,7 @@ class _LecturesScreenState extends State<LecturesScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setState) => Directionality(
-          textDirection: ui.TextDirection.rtl,
+          textDirection: TextDirection.rtl,
           child: AlertDialog(
             title: Text('إضافة محاضرة جديدة'),
             content: SingleChildScrollView(

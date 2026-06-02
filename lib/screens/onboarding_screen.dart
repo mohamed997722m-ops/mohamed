@@ -1,4 +1,3 @@
-import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/profile_provider.dart';
@@ -28,7 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         centerTitle: true,
       ),
       body: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
