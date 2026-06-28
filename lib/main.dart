@@ -57,20 +57,23 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
+      if (value.isNotEmpty) {
+        _saveSharedLink(value.first.path);
+      }
     }, onError: (err) {
       print("getLinkStream error: $err");
     });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+      if (value.isNotEmpty) {
+        _saveSharedLink(value.first.path);
       }
     });
   }
@@ -86,7 +89,7 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
