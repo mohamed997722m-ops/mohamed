@@ -15,7 +15,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: ui.ui.TextDirection.rtl,
         child: Column(
           children: [
             UserAccountsDrawerHeader(

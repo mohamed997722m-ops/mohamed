@@ -11,7 +11,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: Directionality(
-        textDirection: ui.TextDirection.rtl,
+        textDirection: ui.ui.TextDirection.rtl,
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
           child: Column(
