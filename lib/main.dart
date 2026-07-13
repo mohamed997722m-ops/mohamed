@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/chat_restore_guide_screen.dart';
 import 'providers/profile_provider.dart';
 import 'providers/settings_provider.dart';
 import 'services/notification_service.dart';
@@ -57,20 +58,22 @@ class MasarApp extends StatefulWidget {
 }
 
 class _MasarAppState extends State<MasarApp> {
-  late StreamSubscription _intentDataStreamSubscription;
+  StreamSubscription? _intentDataStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
-      _saveSharedLink(value);
+    _intentDataStreamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen((value) {
+      if (value.isNotEmpty) {
+        _saveSharedLink(value.first.path);
+      }
     }, onError: (err) {
       print("getLinkStream error: $err");
     });
 
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      if (value != null) {
-        _saveSharedLink(value);
+    ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+      if (value.isNotEmpty) {
+        _saveSharedLink(value.first.path);
       }
     });
   }
@@ -86,7 +89,7 @@ class _MasarAppState extends State<MasarApp> {
 
   @override
   void dispose() {
-    _intentDataStreamSubscription.cancel();
+    _intentDataStreamSubscription?.cancel();
     super.dispose();
   }
 
@@ -97,7 +100,7 @@ class _MasarAppState extends State<MasarApp> {
       theme: AppTheme.lightTheme,
       home: Consumer<ProfileProvider>(
         builder: (ctx, profileProv, _) =>
-          profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
+            profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
       ),
     );
   }
