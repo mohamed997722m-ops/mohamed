@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/chat_restore_guide_screen.dart';
 import 'providers/profile_provider.dart';
 import 'providers/settings_provider.dart';
 import 'services/notification_service.dart';
@@ -100,7 +99,7 @@ class _MasarAppState extends State<MasarApp> {
       theme: AppTheme.lightTheme,
       home: Consumer<ProfileProvider>(
         builder: (ctx, profileProv, _) =>
-            profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
+          profileProv.profile == null ? OnboardingScreen() : HomeScreen(),
       ),
     );
   }
