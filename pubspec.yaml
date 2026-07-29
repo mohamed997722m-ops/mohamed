@@ -48,6 +48,8 @@ dependencies:
   receive_sharing_intent: any
   dio: any
   provider: any
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
