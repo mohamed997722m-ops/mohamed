@@ -6,6 +6,7 @@ import '../screens/sections_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/chat_restore_guide_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -14,7 +15,8 @@ class MainDrawer extends StatelessWidget {
     return Drawer(
       child: Directionality(
         textDirection: TextDirection.rtl,
-        child: Column(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Colors.green),
@@ -43,6 +45,9 @@ class MainDrawer extends StatelessWidget {
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuranScreen()));
             }),
             _drawerItem(Icons.assignment, "الامتحانات", () {}),
+            _drawerItem(Icons.chat_bubble_outline, "استعادة المحادثات", () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChatRestoreGuideScreen()));
+            }),
             _drawerItem(Icons.bookmark, "المحفوظات", () {
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => BookmarksScreen()));
             }),
