@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 
@@ -28,7 +29,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('المحفوظات')),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: _bookmarks.isEmpty
             ? Center(child: Text('لا يوجد روابط محفوظة'))
             : ListView.builder(
