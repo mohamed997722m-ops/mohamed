@@ -16,8 +16,7 @@ class MainDrawer extends StatelessWidget {
     return Drawer(
       child: Directionality(
         textDirection: ui.TextDirection.rtl,
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: Colors.green),
