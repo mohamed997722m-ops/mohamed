@@ -16,20 +16,38 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
 
-    tasks.withType<JavaCompile>().configureEach {
+fun configureSubProject(p: Project) {
+    if (p.hasProperty("android")) {
+        val androidExt = p.extensions.findByName("android") as? com.android.build.gradle.BaseExtension
+        androidExt?.compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+    }
+    p.tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_17.toString()
         targetCompatibility = JavaVersion.VERSION_17.toString()
     }
-
-    tasks.withType<KotlinCompile>().configureEach {
+    p.tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 }
+
 subprojects {
-    project.evaluationDependsOn(":app")
+    if (state.executed) {
+        configureSubProject(this)
+    } else {
+        afterEvaluate {
+            configureSubProject(this)
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
