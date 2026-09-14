@@ -21,7 +21,30 @@ class AppTheme {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData.dark().copyWith(
+      primaryColor: primaryGreen,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[900],
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryGreen,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+      cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
