@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 import '../services/database_service.dart';
 
 class SectionsScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
         backgroundColor: Colors.green,
       ),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: _sections.isEmpty
             ? Center(child: Text('لا يوجد سكاشن مضافة'))
             : ListView.builder(
@@ -64,7 +65,7 @@ class _SectionsScreenState extends State<SectionsScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setState) => Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: ui.TextDirection.rtl,
           child: AlertDialog(
             title: Text('إضافة سكشن جديد'),
             content: SingleChildScrollView(
