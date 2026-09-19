@@ -21,6 +21,12 @@ subprojects {
 
 subprojects {
     val configureAction: Project.() -> Unit = {
+        extensions.findByType(com.android.build.gradle.BaseExtension::class.java)?.apply {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
         tasks.withType<JavaCompile>().configureEach {
             sourceCompatibility = "17"
             targetCompatibility = "17"
