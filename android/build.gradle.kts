@@ -16,11 +16,7 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
-    project.evaluationDependsOn(":app")
-}
-
-subprojects {
-    afterEvaluate {
+    if (state.executed) {
         tasks.withType<JavaCompile>().configureEach {
             sourceCompatibility = "17"
             targetCompatibility = "17"
@@ -30,7 +26,23 @@ subprojects {
                 jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
             }
         }
+    } else {
+        afterEvaluate {
+            tasks.withType<JavaCompile>().configureEach {
+                sourceCompatibility = "17"
+                targetCompatibility = "17"
+            }
+            tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+                compilerOptions {
+                    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                }
+            }
+        }
     }
+}
+
+subprojects {
+    project.evaluationDependsOn(":app")
 }
 
 tasks.register<Delete>("clean") {
