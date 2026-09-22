@@ -13,15 +13,15 @@ class NotificationService {
   NotificationService._internal();
 
   Future<void> init() async {
-    if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
+    if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST') || !(Platform.isAndroid || Platform.isIOS)) return;
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await (flutterLocalNotificationsPlugin as dynamic).initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
   }
 
   Future<void> showNotification(int id, String title, String body, {bool silent = false}) async {
-    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
+    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST') || !(Platform.isAndroid || Platform.isIOS)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'masar_channel',
       'Masar Notifications',
@@ -29,21 +29,25 @@ class NotificationService {
       priority: Priority.high,
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await (flutterLocalNotificationsPlugin as dynamic).show(id, title, body, platformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
+    );
   }
 
   Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
-    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
-    await (flutterLocalNotificationsPlugin as dynamic).zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
-      const NotificationDetails(
+    if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST') || !(Platform.isAndroid || Platform.isIOS)) return;
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: (dynamic as dynamic).UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }
