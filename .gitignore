@@ -4,5 +4,7 @@ local.properties
 .idea
 .DS_Store
 build
+.dart_tool/
+*.log
 captures
 .externalNativeBuild
