@@ -1,5 +1,5 @@
+import "dart:ui" as ui;
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class ChatRestoreGuideScreen extends StatelessWidget {
   @override
@@ -34,7 +34,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
               ),
               _buildSection(
                 title: '2. تليجرام (Telegram)',
-                icon: Icons.telegram,
+                icon: Icons.send,
                 content: [
                   'تليجرام يحفظ المحادثات سحابياً، لكن إذا حذفت المحادثة نهائياً، فالخيارات محدودة:',
                   '1. ميزة التراجع (Undo): عند حذف محادثة، يظهر شريط أسفل الشاشة لمدة 5 ثوانٍ يتيح لك "تراجع".',
@@ -44,7 +44,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
               ),
               _buildSection(
                 title: '3. فيسبوك ماسنجر (Facebook Messenger)',
-                icon: Icons.messenger,
+                icon: Icons.chat_bubble,
                 content: [
                   '1. التحقق من الأرشيف (Archive): قد تكون المحادثة مخفية وليست محذوفة.\n   - اذهب إلى "الأرشيف" في إعدادات المسنجر وابحث عن المحادثة.',
                   '2. تنزيل معلوماتك:\n   - من تطبيق فيسبوك، اذهب إلى الإعدادات والخصوصية > الإعدادات > مركز الحسابات > معلوماتك وأذوناتك > تنزيل معلوماتك.\n   - اختر "طلب تنزيل"، وحدد "الرسائل" فقط، ثم حدد النطاق الزمني. ستصلك نسخة من الرسائل عبر بريدك الإلكتروني.',
@@ -70,7 +70,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
+        color: Colors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -113,7 +113,7 @@ class ChatRestoreGuideScreen extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.amber.withOpacity(0.1),
+        color: Colors.amber.withValues(alpha: 0.1),
         border: Border.all(color: Colors.amber),
         borderRadius: BorderRadius.circular(10),
       ),

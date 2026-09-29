@@ -6,7 +6,8 @@ import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   factory NotificationService() => _instance;
 
@@ -15,20 +16,27 @@ class NotificationService {
   Future<void> init() async {
     if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
     tz.initializeTimeZones();
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
   }
 
-  Future<void> showNotification(int id, String title, String body, {bool silent = false}) async {
+  Future<void> showNotification(int id, String title, String body,
+      {bool silent = false}) async {
     if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
       'masar_channel',
       'Masar Notifications',
       importance: Importance.max,
       priority: Priority.high,
     );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       id: id,
       title: title,
@@ -37,7 +45,9 @@ class NotificationService {
     );
   }
 
-  Future<void> scheduleNotification(int id, String title, String body, DateTime scheduledTime, {bool silent = false}) async {
+  Future<void> scheduleNotification(
+      int id, String title, String body, DateTime scheduledTime,
+      {bool silent = false}) async {
     if (silent || kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) return;
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id: id,
@@ -45,7 +55,8 @@ class NotificationService {
       body: body,
       scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
       notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
+        android:
+            AndroidNotificationDetails('masar_channel', 'Masar Notifications'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
