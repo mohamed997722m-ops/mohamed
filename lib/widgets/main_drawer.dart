@@ -1,4 +1,4 @@
-import 'dart:ui' as ui;
+import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/lectures_screen.dart';
@@ -6,8 +6,8 @@ import '../screens/tasks_screen.dart';
 import '../screens/sections_screen.dart';
 import '../screens/quran_screen.dart';
 import '../screens/bookmarks_screen.dart';
-import '../screens/settings_screen.dart';
 import '../screens/chat_restore_guide_screen.dart';
+import '../screens/settings_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainDrawer extends StatelessWidget {
