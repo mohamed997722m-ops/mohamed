@@ -15,5 +15,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --debug --no-tree-shake-icons
