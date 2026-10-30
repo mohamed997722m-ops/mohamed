@@ -1,3 +1,4 @@
+import "dart:ui" as ui;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: AlertDialog(
           title: Text('سؤال الحضور'),
           content: Text('هل حضرت محاضرة ${period['subject']}؟'),
@@ -121,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: ui.TextDirection.rtl,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -180,16 +181,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDateSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _dateCard('التاريخ الميلادي', _gregorianDate, Icons.calendar_month),
-        _dateCard('التاريخ الهجري', _hijriDate, Icons.event_note),
-      ],
-    );
-  }
-
   Widget _dateCard(String title, String date, IconData icon) {
     return Expanded(
       child: Card(
@@ -205,6 +196,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDateSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _dateCard('التاريخ الميلادي', _gregorianDate, Icons.calendar_month),
+        _dateCard('التاريخ الهجري', _hijriDate, Icons.event_note),
+      ],
     );
   }
 

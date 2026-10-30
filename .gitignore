@@ -3,6 +3,7 @@
 local.properties
 .idea
 .DS_Store
-build
+build/
+.dart_tool/
 captures
 .externalNativeBuild
